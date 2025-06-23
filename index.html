@@ -392,24 +392,39 @@
     document.getElementById('info-tab-btn').classList.remove('active-tab');
   }
 
-   let wrongCount = 0;
+  let wrongCount = 0;
 
-    function checkAnswer(userAnswer, correctAnswer) {
-      if (userAnswer === correctAnswer) {
-        wrongCount = 0;
-      } else {
-        wrongCount++;
-        if (wrongCount >= 3) {
-          document.getElementById('answer').blur();
-          document.getElementById('chatInput')?.blur();
-          document.getElementById('feedback').innerText = "3번 틀렸어요! 메인 화면으로 이동합니다...";
-          setTimeout(() => {
-            backToMain();
-            wrongCount = 0;
-          }, 3000);
-        }
+  function checkAnswer(userAnswer, correctAnswer) {
+    if (userAnswer === correctAnswer) {
+      wrongCount = 0;
+    } else {
+      wrongCount++;
+      if (wrongCount >= 3) {
+        const input = document.getElementById('chatInput');
+        const answer = document.getElementById('answer');
+
+        // 키보드 강제 숨김
+        input?.blur();
+        answer?.blur();
+        document.activeElement.blur(); // 추가로 현재 포커스 제거
+
+        // 피드백 메시지 표시
+        document.getElementById('feedback').innerText = "3번 틀렸어요! 메인 화면으로 이동합니다...";
+
+        // 3초 후 메인 화면으로 복귀
+        setTimeout(() => {
+          backToMain();
+
+          // 다시 한 번 키보드 숨기기 (안전장치)
+          input?.blur();
+          answer?.blur();
+          document.activeElement.blur();
+
+          wrongCount = 0;
+        }, 3000);
       }
     }
+  }
 
   const fullData = {
     char: [
@@ -1595,6 +1610,15 @@
   window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("timerToggle").checked = settings.timerEnabled;
   });
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+      const input = document.getElementById('chatInput');
+      if (document.activeElement === input) {
+        window.scrollTo(0, 0); // 화면 최상단으로 이동 (쓸림 방지)
+      }
+    });
+  }
 </script>
 
 </body>
