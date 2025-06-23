@@ -392,40 +392,6 @@
     document.getElementById('info-tab-btn').classList.remove('active-tab');
   }
 
-  let wrongCount = 0;
-
-  function checkAnswer(userAnswer, correctAnswer) {
-    if (userAnswer === correctAnswer) {
-      wrongCount = 0;
-    } else {
-      wrongCount++;
-      if (wrongCount >= 3) {
-        const input = document.getElementById('chatInput');
-        const answer = document.getElementById('answer');
-
-        // 키보드 강제 숨김
-        input?.blur();
-        answer?.blur();
-        document.activeElement.blur(); // 추가로 현재 포커스 제거
-
-        // 피드백 메시지 표시
-        document.getElementById('feedback').innerText = "3번 틀렸어요! 메인 화면으로 이동합니다...";
-
-        // 3초 후 메인 화면으로 복귀
-        setTimeout(() => {
-          backToMain();
-
-          // 다시 한 번 키보드 숨기기 (안전장치)
-          input?.blur();
-          answer?.blur();
-          document.activeElement.blur();
-
-          wrongCount = 0;
-        }, 3000);
-      }
-    }
-  }
-
   const fullData = {
     char: [
       "あ","い","う","え","お",
@@ -1268,45 +1234,6 @@
     chatPracticeScreen.style.display = "none";
   }
 
-  function showAutoDismissAlert(message, callback) {
-    chatInput.blur(); // 키보드 내리기
-
-    const existing = document.getElementById("customAlertBg");
-    if (existing) existing.remove();
-
-    const bg = document.createElement("div");
-    bg.id = "customAlertBg";
-    bg.style.position = "fixed";
-    bg.style.top = 0;
-    bg.style.left = 0;
-    bg.style.width = "100%";
-    bg.style.height = "100%";
-    bg.style.backgroundColor = "rgba(0,0,0,0.4)";
-    bg.style.display = "flex";
-    bg.style.justifyContent = "center";
-    bg.style.alignItems = "center";
-    bg.style.zIndex = "9999";
-
-    const box = document.createElement("div");
-    box.id = "customAlertBox";
-    box.style.background = "#fff";
-    box.style.padding = "20px";
-    box.style.borderRadius = "8px";
-    box.style.maxWidth = "80%";
-    box.style.textAlign = "center";
-    box.style.boxShadow = "0 2px 10px rgba(0,0,0,0.3)";
-    box.style.fontSize = "18px";
-    box.textContent = message;
-
-    bg.appendChild(box);
-    document.body.appendChild(bg);
-
-    setTimeout(() => {
-      bg.remove();
-      if (callback) callback();
-    }, 2000);
-  }
-
   // 기존 연습 기능 시작
   function startPractice(selectedMode) {
     mode = selectedMode;
@@ -1355,9 +1282,7 @@
           count++;
           questionIndex++;
           if ((mode !== "sentence" && count >= 3) || (mode === "sentence" && count >= 2)) {
-            showAutoDismissAlert("완료! 메인 화면으로 돌아갑니다 ✨", () => { 
-              endChatPractice();
-            });
+            alert("완료! 메인 화면으로 돌아갑니다 ✨");
             backToMain();
           } else {
             nextQuestion();
@@ -1407,9 +1332,7 @@
         count++;
         questionIndex++;
         if ((mode !== "sentence" && count >= 3) || (mode === "sentence" && count >= 2)) {
-          showAutoDismissAlert("완료! 메인 화면으로 돌아갑니다 ✨", () => { 
-            endChatPractice();
-          });
+          alert("완료! 메인 화면으로 돌아갑니다 ✨");
           backToMain();
         } else {
           document.getElementById("feedback").innerText = "정답!";
@@ -1423,9 +1346,7 @@
         count++;
         questionIndex++;
         if ((mode !== "sentence" && count >= 3) || (mode === "sentence" && count >= 2)) {
-          showAutoDismissAlert("완료! 메인 화면으로 돌아갑니다 ✨", () => { 
-            endChatPractice();
-          });
+          alert("완료! 메인 화면으로 돌아갑니다 ✨");
           backToMain();
         } else {
           document.getElementById("feedback").innerText = "정답!";
@@ -1464,9 +1385,7 @@
       chatTimerDisplay.textContent = `타이머: ${chatTimerValue}초`;
       if (chatTimerValue <= 0) {
         clearInterval(chatTimerInterval);
-        showAutoDismissAlert("시간 초과! 메인 화면으로 돌아갑니다 ✨", () => { 
-          endChatPractice();
-        });
+        alert("시간 초과! 메인 화면으로 돌아갑니다 ✨");
         endChatPractice();
       }
     }, 1000);
@@ -1490,9 +1409,8 @@
         chatTimerDisplay.textContent = `타이머: ${chatTimerValue}초`;
         if (chatTimerValue <= 0) {
           clearInterval(chatTimerInterval);
-          showAutoDismissAlert("시간 초과! 메인 화면으로 돌아갑니다 ✨", () => { 
-            endChatPractice();
-          });
+          alert("시간 초과! 메인 화면으로 돌아갑니다 ✨");
+          endChatPractice();
         }
       }, 1000);
     }
@@ -1554,9 +1472,7 @@
             clearInterval(chatTimerInterval);
 
             setTimeout(() => {
-              showAutoDismissAlert("채팅 연습 완료! 메인 화면으로 돌아갑니다 ✨", () => { 
-                endChatPractice();
-              });
+              alert("채팅 연습 완료! メイン画面に戻ります ✨");
               endChatPractice();
               chatInput.disabled = false;
             }, 3000);
@@ -1578,9 +1494,7 @@
                   chatTimerDisplay.textContent = `タイマー: ${chatTimerValue}秒`;
                   if (chatTimerValue <= 0) {
                     clearInterval(chatTimerInterval);
-                    showAutoDismissAlert("시간 초과! 메인 화면으로 돌아갑니다 ✨", () => { 
-                      endChatPractice();
-                    });
+                    alert("시간 초과! 메인 화면으로 돌아갑니다 ✨");
                     endChatPractice();
                   }
                 }, 1000);
@@ -1595,9 +1509,7 @@
             }, 300);
           }
         } else {
-          showAutoDismissAlert("다시 한 번 입력해주세요", () => { 
-            endChatPractice();
-          });
+          alert("答えが違います。もう一度入力してください。");
           chatInput.value = "";
         }
       }
@@ -1664,20 +1576,6 @@
   window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("timerToggle").checked = settings.timerEnabled;
   });
-
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', () => {
-      const input = document.getElementById('chatInput');
-      if (document.activeElement === input) {
-        // 키보드 올라올 때 강제로 스크롤 조정해서 쓸림 방지
-        // window.scrollTo(0, 0); 대신 이렇게 바꾸기:
-        setTimeout(() => {
-          // 부드럽게 스크롤 최상단 이동
-          window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
-        }, 100);
-      }
-    });
-  }
 </script>
 
 </body>
