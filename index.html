@@ -7,7 +7,7 @@
   <style>
     html, body {
       width: 100vw;
-      height: 100vh;
+      height: 100dvh; /* ← 핵심! 100vh 대신 100dvh 사용 */
       margin: 0;
       padding: 0;
       overflow: hidden; /* 스크롤 막기 */
@@ -391,6 +391,25 @@
     document.getElementById('settings-tab-btn').classList.remove('active-tab');
     document.getElementById('info-tab-btn').classList.remove('active-tab');
   }
+
+   let wrongCount = 0;
+
+    function checkAnswer(userAnswer, correctAnswer) {
+      if (userAnswer === correctAnswer) {
+        wrongCount = 0;
+      } else {
+        wrongCount++;
+        if (wrongCount >= 3) {
+          document.getElementById('answer').blur();
+          document.getElementById('chatInput')?.blur();
+          document.getElementById('feedback').innerText = "3번 틀렸어요! 메인 화면으로 이동합니다...";
+          setTimeout(() => {
+            backToMain();
+            wrongCount = 0;
+          }, 3000);
+        }
+      }
+    }
 
   const fullData = {
     char: [
