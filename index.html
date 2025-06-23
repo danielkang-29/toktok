@@ -11,6 +11,7 @@
       margin: 0;
       padding: 0;
       overflow: hidden; /* 스크롤 막기 */
+      position: fixed;
       -webkit-overflow-scrolling: touch;
     }
     .screen {
@@ -347,14 +348,16 @@
 
     <!-- 채팅 연습 화면 -->
     <div id="chat-practice" class="screen" style="display:none;">
-      <h2>채팅 연습</h2>
-      <div id="chatTimerArea" style="display: flex; justify-content: center; align-items: center; gap: 1rem;">
-        <div id="chatTimer">타이머: 30초</div>
-        <button id="chatTimerToggleBtn" onclick="toggleChatTimer()">⏱ 타이머 끄기</button>
+    <div id="chatTimerArea" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+      <div style="width: 300px; height: 10px; background: #ddd; border-radius: 5px; overflow: hidden;">
+        <div id="chatTimerBar" style="height: 100%; width: 100%; background: #4caf50; transition: width 1s linear;"></div>
       </div>
-      <div id="chatBox"></div>
-      <input type="text" id="chatInput" placeholder="답장을 입력하세요..." autocomplete="off" />
+      <div id="chatTimer" style="margin-top: 4px; font-size: 14px; color: #333;">⏱ 타이머 켜짐</div>
+      <button id="chatTimerToggleBtn" onclick="toggleChatTimer()">⏱ 타이머 끄기</button>
     </div>
+    <div id="chatBox"></div>
+    <input type="text" id="chatInput" placeholder="답장을 입력하세요..." autocomplete="off" />
+  </div>
 
   </div>
 
@@ -1239,6 +1242,8 @@
     mode = selectedMode;
     count = 0;
     const shuffled = [...fullData[mode]].sort(() => Math.random() - 0.5);
+    const modeTitle = document.getElementById("mode-title");
+    modeTitle.style.display = "none"; // 제목 숨기기
     currentSet = shuffled.slice(0, mode === "sentence" ? 2 : 3);
     questionIndex = 0;
     hideAllScreens();
@@ -1260,9 +1265,10 @@
 
     if (!settings.timerEnabled) {
       document.getElementById("progress-container").style.display = "none";
-      return; // 타이머 꺼져 있으면 타이머 시작 안 함
+      return; // 타이머 꺼져 있으면 함수 종료
     }
 
+    // 타이머 켜져 있으면 아래 코드 계속 실행
     let timeLeft = duration;
     const progressBar = document.getElementById("progress-bar");
     const progressContainer = document.getElementById("progress-container");
@@ -1282,7 +1288,9 @@
           count++;
           questionIndex++;
           if ((mode !== "sentence" && count >= 3) || (mode === "sentence" && count >= 2)) {
-            alert("완료! 메인 화면으로 돌아갑니다 ✨");
+            showAutoDismissAlert("완료! 메인 화면으로 돌아갑니다 ✨", () => { 
+              endChatPractice();
+            });
             backToMain();
           } else {
             nextQuestion();
@@ -1369,7 +1377,6 @@
     chatInput.value = "";
     chatInput.focus();
     chatTimerValue = 30;
-    chatTimerDisplay.textContent = `타이머: ${chatTimerValue}초`;
 
     // 첫 질문 (bot 메시지)
     appendChatMessage(chatSets[chatSetIndex][chatRound], "bot", false);
@@ -1382,7 +1389,8 @@
     clearInterval(chatTimerInterval);
     chatTimerInterval = setInterval(() => {
       chatTimerValue--;
-      chatTimerDisplay.textContent = `타이머: ${chatTimerValue}초`;
+      updateChatTimerDisplay(); // ⬅️ 프로그레스 바 갱신
+
       if (chatTimerValue <= 0) {
         clearInterval(chatTimerInterval);
         alert("시간 초과! 메인 화면으로 돌아갑니다 ✨");
@@ -1403,10 +1411,10 @@
       document.getElementById("chatTimer").textContent = "⏱ 타이머 꺼짐";
     } else {
       chatTimerValue = 30;
-      document.getElementById("chatTimer").textContent = `타이머: ${chatTimerValue}초`;
       chatTimerInterval = setInterval(() => {
         chatTimerValue--;
-        chatTimerDisplay.textContent = `타이머: ${chatTimerValue}초`;
+        updateChatTimerDisplay(); // ⬅️ 프로그레스 바 갱신
+
         if (chatTimerValue <= 0) {
           clearInterval(chatTimerInterval);
           alert("시간 초과! 메인 화면으로 돌아갑니다 ✨");
@@ -1491,7 +1499,8 @@
                 clearInterval(chatTimerInterval);
                 chatTimerInterval = setInterval(() => {
                   chatTimerValue--;
-                  chatTimerDisplay.textContent = `タイマー: ${chatTimerValue}秒`;
+                  updateChatTimerDisplay(); // ⬅️ 프로그레스 바 갱신
+
                   if (chatTimerValue <= 0) {
                     clearInterval(chatTimerInterval);
                     alert("시간 초과! 메인 화면으로 돌아갑니다 ✨");
@@ -1536,7 +1545,6 @@
     document.getElementById("settings-tab-btn").classList.remove("active-tab");
   }
   function backToMainFromSettings() {
-    // 설정 저장
     const fs = document.querySelector('input[name="fontSize"]:checked').value;
     settings.fontSize = fs;
     settings.charTime = +document.getElementById("charTime").value;
@@ -1544,7 +1552,6 @@
     settings.sentenceTime = +document.getElementById("sentenceTime").value;
     settings.timerEnabled = document.getElementById("timerToggle").checked;
 
-    // 설정 슬라이더 값 텍스트 업데이트
     document.getElementById("charTimeVal").textContent = settings.charTime;
     document.getElementById("wordTimeVal").textContent = settings.wordTime;
     document.getElementById("sentenceTimeVal").textContent = settings.sentenceTime;
@@ -1557,10 +1564,23 @@
     mainScreen.classList.add("active");
   }
   function backToMain() {
-    clearInterval(timer);
+    const fs = document.querySelector('input[name="fontSize"]:checked').value;
+    settings.fontSize = fs;
+    settings.charTime = +document.getElementById("charTime").value;
+    settings.wordTime = +document.getElementById("wordTime").value;
+    settings.sentenceTime = +document.getElementById("sentenceTime").value;
+    settings.timerEnabled = document.getElementById("timerToggle").checked;
+
     hideAllScreens();
-    mainScreen.classList.add("active");
+    document.getElementById("main").classList.add("active");
+
+    // 키보드 내리기 (입력 포커스 해제)
+    const focused = document.activeElement;
+    if (focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA')) {
+      focused.blur();
+    }
   }
+
 
   // 설정 슬라이더 이벤트 연결
   document.getElementById("charTime").addEventListener("input", (e) => {
@@ -1574,8 +1594,17 @@
   });
 
   window.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("timerToggle").checked = settings.timerEnabled;
+    document.getElementById("timerToggle").addEventListener("change", (e) => {
+      settings.timerEnabled = e.target.checked;
+    });
   });
+  function updateChatTimerDisplay() {
+    const bar = document.getElementById("chatTimerBar");
+    if (bar && typeof chatTimerValue !== 'undefined') {
+      const percent = (chatTimerValue / 30) * 100;
+      bar.style.width = `${percent}%`;
+    }
+  }
 </script>
 
 </body>
