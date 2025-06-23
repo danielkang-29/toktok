@@ -5,6 +5,14 @@
   <title>톡톡 일본어</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <style>
+    html, body {
+      overflow: hidden; /* 스크롤 안 되게 */
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      touch-action: none; /* 터치로 화면 이동 막기 (선택사항) */
+    }
     .screen {
       display: none;
     }
@@ -20,10 +28,11 @@
     }
 
     .container {
-      width: 314px; /* 아이폰 15 가로 해상도 */
-      height: 682px; /* 아이폰 15 세로 해상도 */
-      margin: 20px auto;
-      border: 1px solid #aaa;
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw; /* 혹시 max-width 제한 있다면 없애기 */
+      max-height: 100vh;
+      margin: 0;
       padding: 20px;
       box-sizing: border-box;
       border-radius: 20px;
