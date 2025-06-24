@@ -224,7 +224,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      height: calc(100dvh - 40px);
+      height: 100vh;
     }
 
     #chatTimerArea {
@@ -449,7 +449,6 @@
         <div class="timer-bar-wrapper">
           <div id="chatTimerBar"></div>
         </div>
-        <div id="chatTimer">⏱ 타이머 켜짐</div>
         <button id="chatTimerToggleBtn" onclick="toggleChatTimer()">⏱ 타이머 끄기</button>
       </div>
 
@@ -1615,7 +1614,6 @@
       toggleBtn.textContent = "⏱ 타이머 끄기";
     } else {
       chatTimerBar.style.width = "0%";
-      chatTimerText.textContent = "⏱ 타이머 꺼짐";
       toggleBtn.textContent = "⏱ 타이머 켜기";
     }
   }
