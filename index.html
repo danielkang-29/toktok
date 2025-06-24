@@ -1302,13 +1302,14 @@
 
   function nextQuestion() {
     const q = currentSet[questionIndex];
-    document.getElementById("feedback").innerText = "";
-    document.getElementById("feedback").style.color = "green";
-    document.getElementById("answer").value = "";
-    document.getElementById("answer").focus();
-    
-    const answerInput = document.getElementById('answer');
-    answerInput.value = '';      // 입력 내용 초기화
+    const feedback = document.getElementById("feedback");
+    const answerInput = document.getElementById("answer");
+
+    feedback.innerText = "";
+    feedback.style.color = "green";
+
+    // 입력 초기화 (중복 제거)
+    answerInput.value = "";
     answerInput.focus();
 
     const timeLimits = {
@@ -1348,7 +1349,6 @@
         }
       }
     } else if (mode === "word" || mode === "sentence") {
-      // 한자만 정답으로 체크
       if (user === q.kanji) {
         clearInterval(timer);
         count++;
@@ -1363,7 +1363,6 @@
       }
     }
   });
-
 
   // 채팅 연습 시작
   function startChatPractice() {
