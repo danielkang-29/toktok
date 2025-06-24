@@ -314,25 +314,25 @@
 
       <div>
         <h3>타이머 사용</h3>
-        <label><input type="checkbox" id="timerToggle" checked> 타이머 켜기</label>
+        <label><input type="checkbox" id="timerToggle"> 타이머 켜기</label>
       </div>
 
       <div>
         <h3>타이머 조정</h3>
 
         <div class="slider-group">
-          <label for="charTime">글자 제한 시간: <span id="charTimeVal">3</span>초</label>
-          <input type="range" id="charTime" min="2" max="5" step="1" value="3" />
+          <label for="charTime">글자 제한 시간: <span id="charTimeVal">5</span>초</label>
+          <input type="range" id="charTime" min="2" max="5" step="1" value="5" />
         </div>
 
         <div class="slider-group">
-          <label for="wordTime">단어 제한 시간: <span id="wordTimeVal">3</span>초</label>
-          <input type="range" id="wordTime" min="2" max="5" step="1" value="3" />
+          <label for="wordTime">단어 제한 시간: <span id="wordTimeVal">5</span>초</label>
+          <input type="range" id="wordTime" min="2" max="5" step="1" value="5" />
         </div>
 
         <div class="slider-group">
-          <label for="sentenceTime">문장 제한 시간: <span id="sentenceTimeVal">20</span>초</label>
-          <input type="range" id="sentenceTime" min="10" max="30" step="5" value="20" />
+          <label for="sentenceTime">문장 제한 시간: <span id="sentenceTimeVal">30</span>초</label>
+          <input type="range" id="sentenceTime" min="10" max="30" step="5" value="30" />
         </div>
       </div>
     </div>
@@ -1134,7 +1134,7 @@
     charTime: 3,
     wordTime: 3,
     sentenceTime: 20,
-    timerEnabled: true
+    timerEnabled: false
   };
 
   let mode = "";
@@ -1237,13 +1237,12 @@
     chatPracticeScreen.style.display = "none";
   }
 
-  // 기존 연습 기능 시작
   function startPractice(selectedMode) {
     mode = selectedMode;
     count = 0;
     const shuffled = [...fullData[mode]].sort(() => Math.random() - 0.5);
     const modeTitle = document.getElementById("mode-title");
-    modeTitle.style.display = "none"; // 제목 숨기기
+    modeTitle.style.display = "none";
     currentSet = shuffled.slice(0, mode === "sentence" ? 2 : 3);
     questionIndex = 0;
     hideAllScreens();
@@ -1265,10 +1264,9 @@
 
     if (!settings.timerEnabled) {
       document.getElementById("progress-container").style.display = "none";
-      return; // 타이머 꺼져 있으면 함수 종료
+      return;
     }
 
-    // 타이머 켜져 있으면 아래 코드 계속 실행
     let timeLeft = duration;
     const progressBar = document.getElementById("progress-bar");
     const progressContainer = document.getElementById("progress-container");
@@ -1288,7 +1286,7 @@
           count++;
           questionIndex++;
           if ((mode !== "sentence" && count >= 3) || (mode === "sentence" && count >= 2)) {
-            showAutoDismissAlert("완료! 메인 화면으로 돌아갑니다 ✨", () => { 
+            showAutoDismissAlert("완료! 메인 화면으로 돌아갑니다 ✨", () => {
               endChatPractice();
             });
             backToMain();
@@ -1302,23 +1300,13 @@
 
   function nextQuestion() {
     const q = currentSet[questionIndex];
-    const feedback = document.getElementById("feedback");
+    document.getElementById("feedback").innerText = "";
+    document.getElementById("feedback").style.color = "green";
     const answerInput = document.getElementById("answer");
-
-    feedback.innerText = "";
-    feedback.style.color = "green";
-
-    // 입력 초기화 및 포커스
     answerInput.value = "";
     answerInput.focus();
 
-    const timeLimits = {
-      char: settings.charTime,
-      word: settings.wordTime,
-      sentence: settings.sentenceTime
-    };
-    startTimer(timeLimits[mode]);
-
+    // 문제 표시
     if (mode === "char") {
       document.getElementById("question").innerText = q;
     } else if (mode === "word") {
@@ -1329,13 +1317,35 @@
         <div style="font-size: 28px;">${q.kanji}</div>
       `;
     }
+
+    // 타이머는 문제를 보여준 후에 조건 보고 켠다!
+    const timeLimits = {
+      char: settings.charTime,
+      word: settings.wordTime,
+      sentence: settings.sentenceTime
+    };
+
+    const progressContainer = document.getElementById("progress-container");
+
+    // ✅ 이 조건에서만 켜지도록 명확히 제어
+    if (settings.timerEnabled === true) {
+      startTimer(timeLimits[mode]);
+    } else {
+      progressContainer.style.display = "none";
+      clearInterval(timer);
+    }
   }
 
-  document.getElementById("answer").addEventListener("input", () => {
-    const user = document.getElementById("answer").value.trim();
-    const q = currentSet[questionIndex];
+  // 정답 처리
+  const answerInput = document.getElementById("answer");
+  const feedback = document.getElementById("feedback");
 
-    if (mode === "char") {
+  answerInput.addEventListener("keydown", (e) => {
+    if (mode === "char" && e.key === "Enter") {
+      e.preventDefault();
+      const user = answerInput.value.trim();
+      const q = currentSet[questionIndex];
+
       if (user === q) {
         clearInterval(timer);
         count++;
@@ -1344,11 +1354,18 @@
           alert("완료! 메인 화면으로 돌아갑니다 ✨");
           backToMain();
         } else {
-          document.getElementById("feedback").innerText = "정답!";
+          feedback.innerText = "정답!";
           setTimeout(nextQuestion, 1000);
         }
       }
-    } else if (mode === "word" || mode === "sentence") {
+    }
+  });
+
+  answerInput.addEventListener("input", () => {
+    if (mode === "word" || mode === "sentence") {
+      const user = answerInput.value.trim();
+      const q = currentSet[questionIndex];
+
       if (user === q.kanji) {
         clearInterval(timer);
         count++;
@@ -1357,12 +1374,13 @@
           alert("완료! 메인 화면으로 돌아갑니다 ✨");
           backToMain();
         } else {
-          document.getElementById("feedback").innerText = "정답!";
+          feedback.innerText = "정답!";
           setTimeout(nextQuestion, 1000);
         }
       }
     }
   });
+
 
   // 채팅 연습 시작
   function startChatPractice() {
