@@ -1131,6 +1131,7 @@
 
   let settings = {
     fontSize: "normal",
+    timerEnabled: false,
     charTime: 3,
     wordTime: 3,
     sentenceTime: 20,
@@ -1215,6 +1216,7 @@
   let chatRound = 0; // 0부터 9까지, 짝수는 봇, 홀수는 유저 입력 차례
   let chatTimerValue = 30;
   let chatTimerInterval = null;
+  let chatTimerEnabled = false;  // 타이머 기본 꺼짐 상태
 
   const mainScreen = document.getElementById("main");
   const practiceScreen = document.getElementById("practice");
@@ -1381,9 +1383,27 @@
     }
   });
 
+  function updateChatTimerUI() {
+    const chatTimerBar = document.getElementById("chatTimerBar");
+    const chatTimerText = document.getElementById("chatTimer");
+    const toggleBtn = document.getElementById("chatTimerToggleBtn");
 
-  // 채팅 연습 시작
+    if (chatTimerEnabled) {
+      chatTimerBar.style.width = `${(chatTimerValue / 30) * 100}%`;
+      toggleBtn.textContent = "⏱ 타이머 끄기";
+    } else {
+      chatTimerBar.style.width = "0%";
+      chatTimerText.textContent = "⏱ 타이머 꺼짐";
+      toggleBtn.textContent = "⏱ 타이머 켜기";
+    }
+  }
+
+  // 채팅 연습 시작 함수
   function startChatPractice() {
+    chatTimerEnabled = false;  // 시작할 때 타이머 꺼짐 상태로
+    chatTimerValue = 30;       // 초기 타이머 값 세팅
+    updateChatTimerUI();       // UI 초기화
+
     hideAllScreens();
     chatPracticeScreen.style.display = "flex";
     chatPracticeScreen.classList.add("active");
@@ -1393,44 +1413,30 @@
     chatBox.innerHTML = "";
     chatInput.value = "";
     chatInput.focus();
-    chatTimerValue = 30;
 
-    // 첫 질문 (bot 메시지)
+    // 첫 질문 (봇 메시지)
     appendChatMessage(chatSets[chatSetIndex][chatRound], "bot", false);
 
-    chatRound++; // ✅ 유저 차례로 넘김
+    chatRound++; // 유저 차례로
 
-    // 예상 답변 보여주기 (미리 유저가 입력할 답변)
     showExpectedAnswer();
 
-    clearInterval(chatTimerInterval);
-    chatTimerInterval = setInterval(() => {
-      chatTimerValue--;
-      updateChatTimerDisplay(); // ⬅️ 프로그레스 바 갱신
-
-      if (chatTimerValue <= 0) {
-        clearInterval(chatTimerInterval);
-        alert("시간 초과! 메인 화면으로 돌아갑니다 ✨");
-        endChatPractice();
-      }
-    }, 1000);
+    clearInterval(chatTimerInterval); // 혹시 돌고 있으면 정리
+    // 타이머는 꺼져있으니 새로 시작하지 않음
   }
 
-  let chatTimerEnabled = true;
-
+  // 타이머 토글 함수
   function toggleChatTimer() {
     chatTimerEnabled = !chatTimerEnabled;
-    const btn = document.getElementById("chatTimerToggleBtn");
-    btn.textContent = chatTimerEnabled ? "⏱ 타이머 끄기" : "⏱ 타이머 켜기";
+    updateChatTimerUI();
 
-    if (!chatTimerEnabled) {
-      clearInterval(chatTimerInterval);
-      document.getElementById("chatTimer").textContent = "⏱ 타이머 꺼짐";
-    } else {
+    clearInterval(chatTimerInterval);
+
+    if (chatTimerEnabled) {
       chatTimerValue = 30;
       chatTimerInterval = setInterval(() => {
         chatTimerValue--;
-        updateChatTimerDisplay(); // ⬅️ 프로그레스 바 갱신
+        updateChatTimerUI();
 
         if (chatTimerValue <= 0) {
           clearInterval(chatTimerInterval);
@@ -1445,14 +1451,14 @@
   function appendChatMessage(text, sender, correct) {
     const div = document.createElement("div");
     div.classList.add("chat-msg");
-    if(sender === "bot") {
+    if (sender === "bot") {
       div.classList.add("bot");
-      if(correct) div.classList.add("correct");
+      if (correct) div.classList.add("correct");
       div.textContent = text;
-    } else if(sender === "user") {
+    } else if (sender === "user") {
       div.classList.add("user");
       div.textContent = text;
-    } else if(sender === "expected") {
+    } else if (sender === "expected") {
       div.classList.add("expected");
       div.textContent = text;
     }
@@ -1460,35 +1466,30 @@
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 
-  // 예상 답변 미리 보여주는 함수
+  // 예상 답변 보여주기 함수
   function showExpectedAnswer() {
-    // 기존 예상 답변 제거
     const prevExpected = chatBox.querySelector(".expected");
     if (prevExpected) chatBox.removeChild(prevExpected);
 
-    // 현재 round가 유저 차례일 때만 예상 답변 보여줌
     if (chatRound < chatSets[chatSetIndex].length && chatRound % 2 === 1) {
       const expected = chatSets[chatSetIndex][chatRound];
       appendChatMessage(expected, "expected", false);
     }
   }
 
-  // 유저가 답변 입력 시 처리
+  // 유저 입력 이벤트 처리
   chatInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
       const inputVal = chatInput.value.trim();
       if (!inputVal) return;
 
-      // 유저 차례인지 확인
-      if (chatRound % 2 === 1) {
+      if (chatRound % 2 === 1) { // 유저 차례인지 확인
         const correctAnswer = chatSets[chatSetIndex][chatRound];
         if (inputVal === correctAnswer) {
           appendChatMessage(inputVal, "user", false);
 
-          // 유저 답변 입력 후: chatRound 증가시키지 말고 그대로 사용
           if (chatRound === 9) {
-            // 마지막 유저 입력 후, 봇 마지막 반응 출력
             setTimeout(() => {
               appendChatMessage(chatSets[chatSetIndex][10], "bot", false);
             }, 300);
@@ -1502,21 +1503,18 @@
               chatInput.disabled = false;
             }, 3000);
           } else {
-            // 다음 봇 메시지 출력
             setTimeout(() => {
-              chatRound++;  // 여기서 증가
+              chatRound++;
               appendChatMessage(chatSets[chatSetIndex][chatRound], "bot", false);
-              chatRound++;  // 다음 유저 입력 차례로
+              chatRound++;
 
-              // 타이머 및 입력 초기화
               chatTimerValue = 30;
 
               if (chatTimerEnabled) {
-                chatTimerDisplay.textContent = `タイマー: ${chatTimerValue}秒`;
                 clearInterval(chatTimerInterval);
                 chatTimerInterval = setInterval(() => {
                   chatTimerValue--;
-                  updateChatTimerDisplay(); // ⬅️ 프로그레스 바 갱신
+                  updateChatTimerUI();
 
                   if (chatTimerValue <= 0) {
                     clearInterval(chatTimerInterval);
@@ -1525,7 +1523,7 @@
                   }
                 }, 1000);
               } else {
-                chatTimerDisplay.textContent = "⏱ タイマーオフ";
+                updateChatTimerUI();
               }
 
               chatInput.value = "";
@@ -1542,6 +1540,7 @@
     }
   });
 
+  // 채팅 연습 종료 함수
   function endChatPractice() {
     clearInterval(chatTimerInterval);
     hideAllScreens();
