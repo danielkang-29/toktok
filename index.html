@@ -244,7 +244,7 @@
     @media (max-width: 768px) {
       #chat-practice {
         max-width: 100%;
-        height: 33vh;
+        height: 33dvh;
       }
     }
 
@@ -461,7 +461,8 @@
       <h2>정보</h2>
       <div id="info-text">
         개발자 강민서<br />
-        감수자 막둥이
+        감수자 막둥이<br />
+        어시스턴트 황금순
       </div>
     </div>
 
@@ -1310,6 +1311,7 @@
   let currentSet = [];
   let questionIndex = 0;
   let timer = null;
+  let wrongCount = 0;
 
   let chatSets = [
     [
@@ -1385,6 +1387,7 @@
   let chatTimerInterval = null;
   let chatTimerEnabled = false;  // 타이머 기본 꺼짐 상태
   let maxCount = 5;
+  let isAnswering = false;
 
   const mainScreen = document.getElementById("main");
   const practiceScreen = document.getElementById("practice");
@@ -1420,7 +1423,8 @@
 
   function startPractice(selectedMode) {
     mode = selectedMode;
-    count = 0;
+    count = 0;       // 정답 개수 초기화
+    wrongCount = 0;  // 오답 개수 초기화
 
     // 설정에서 문제 수 가져오기 (기존 코드)
     let countLimit = 5; // 기본값
@@ -1480,11 +1484,13 @@
         clearInterval(timer);
         document.getElementById("feedback").style.color = "red";
         document.getElementById("feedback").innerText = "시간 초과!";
+        
+        wrongCount++;
+        questionIndex++;
+
         setTimeout(() => {
-          count++;
-          questionIndex++;
-          if ((mode !== "sentence" && count >= 3) || (mode === "sentence" && count >= 2)) {
-            showFailureOverlay(); // ✅ 실패 오버레이 표시
+          if (wrongCount >= 3) {
+            showFailureOverlay(); // ❌ 즉시 실패
           } else {
             nextQuestion();
           }
@@ -1494,6 +1500,11 @@
   }
 
   function nextQuestion() {
+    if (questionIndex >= currentSet.length) {
+      showCompletionOverlay();
+      return;
+    }
+
     const q = currentSet[questionIndex];
     document.getElementById("feedback").innerText = "";
     document.getElementById("feedback").style.color = "green";
@@ -1553,13 +1564,16 @@
     }
   });
 
-  // 단어/문장 연습 정답 처리 (기존 유지)
+  // 단어/문장 연습 정답 처리 (수정)
   answerInput.addEventListener("input", () => {
+    if (isAnswering) return;  // 이미 처리 중이면 무시
+
     if (mode === "word" || mode === "sentence") {
       const user = answerInput.value.trim();
       const q = currentSet[questionIndex];
 
       if (user === q.kanji) {
+        isAnswering = true;
         clearInterval(timer);
         count++;
         questionIndex++;
@@ -1569,18 +1583,52 @@
         if (count >= maxCount) {
           setTimeout(() => {
             showCompletionOverlay();
-          }, 500); // "정답!" 보여준 후
+            isAnswering = false;
+          }, 500);
         } else {
-          setTimeout(nextQuestion, 1000);
+          setTimeout(() => {
+            nextQuestion();
+            isAnswering = false;
+          }, 1000);
+        }
+      } else if (user.length === q.kanji.length) {
+        isAnswering = true;
+        clearInterval(timer);
+        wrongCount++;
+        questionIndex++;
+
+        feedback.style.color = "red";
+        feedback.innerText = "오답!";
+
+        if (wrongCount >= 3) {
+          setTimeout(() => {
+            showFailureOverlay();
+            isAnswering = false;
+          }, 500);
+        } else {
+          setTimeout(() => {
+            nextQuestion();
+            isAnswering = false;
+          }, 1000);
         }
       }
     }
   });
 
+
   function handleNextStep() {
+    if (isAnswering) return;  // 이미 처리 중이면 무시
+    isAnswering = true;
+
     if (mode === "char") {
       const user = answerInput.value.trim();
       const q = currentSet[questionIndex];
+
+      if (!q) {
+        console.warn("문제가 없거나 questionIndex가 범위를 벗어났어요.", currentSet, questionIndex);
+        isAnswering = false;
+        return;
+      }
 
       if (user === q) {
         clearInterval(timer);
@@ -1592,10 +1640,35 @@
         if (count >= maxCount) {
           setTimeout(() => {
             showCompletionOverlay();
-          }, 500); // 잠깐 "정답!" 보여주기
+            isAnswering = false;
+          }, 500);
         } else {
-          setTimeout(nextQuestion, 1000);
+          setTimeout(() => {
+            nextQuestion();
+            isAnswering = false;
+          }, 1000);
         }
+      } else if (user.length === q.length) {
+        clearInterval(timer);
+        wrongCount++;
+        questionIndex++;
+
+        feedback.style.color = "red";
+        feedback.innerText = "오답!";
+
+        if (wrongCount >= 3) {
+          setTimeout(() => {
+            showFailureOverlay();
+            isAnswering = false;
+          }, 500);
+        } else {
+          setTimeout(() => {
+            nextQuestion();
+            isAnswering = false;
+          }, 1000);
+        }
+      } else {
+        isAnswering = false;
       }
     }
   };
@@ -1645,8 +1718,14 @@
 
   // 채팅 연습 시작 함수
   function startChatPractice() {
+    wrongCount = 0;  // 여기에 꼭 넣어줘야 함!
+    chatRound = 0;
+    count = 0;
+    questionIndex = 0;
     chatTimerEnabled = false;  // 시작할 때 타이머 꺼짐 상태로
     console.log("채팅 타이머 상태:", chatTimerEnabled);  // 여기 넣기!
+
+    startChatTimer();
 
     chatTimerValue = 30;       // 초기 타이머 값 세팅
     updateChatTimerUI();       // UI 초기화
@@ -1656,6 +1735,7 @@
     chatPracticeScreen.classList.add("active");
 
     chatSetIndex = Math.floor(Math.random() * chatSets.length);
+    currentSet = chatSets[chatSetIndex];  // 이 줄이 반드시 있어야 함
     chatRound = 0;
     chatBox.innerHTML = "";
     chatInput.value = "";
@@ -1679,6 +1759,22 @@
 
     clearInterval(chatTimerInterval);
 
+    if (chatTimerEnabled) {
+      chatTimerValue = 30;
+      chatTimerInterval = setInterval(() => {
+        chatTimerValue--;
+        updateChatTimerUI();
+
+        if (chatTimerValue <= 0) {
+          clearInterval(chatTimerInterval);
+          alert("시간 초과! 메인 화면으로 돌아갑니다 ✨");
+          endChatPractice();
+        }
+      }, 1000);
+    }
+  }
+
+  function startChatTimer() {
     if (chatTimerEnabled) {
       chatTimerValue = 30;
       chatTimerInterval = setInterval(() => {
@@ -1790,6 +1886,7 @@
   // 채팅 연습 종료 함수
   function endChatPractice() {
     clearInterval(chatTimerInterval);
+    wrongCount = 0;
     hideAllScreens();
     mainScreen.classList.add("active");
   }
@@ -1840,6 +1937,11 @@
 
     hideAllScreens();
     document.getElementById("main").classList.add("active");
+
+    count = 0;
+    wrongCount = 0; // 여기 추가!
+    hideAllScreens();
+    mainScreen.classList.add("active");
 
     // 키보드 내리기 (입력 포커스 해제)
     const focused = document.activeElement;
