@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>톡톡 일본어</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <style>
+    html, body {
+      width: 100vw;
+      height: 100dvh; /* ← 핵심! 100vh 대신 100dvh 사용 */
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* 스크롤 막기 */
+      -webkit-overflow-scrolling: touch;
+    }
+    .screen {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 상단 바 */
+    #top-bar {
+      width: 100%;
+      height: 40px;
+      background-color: #0B4EA2; /* 옅은 파란색 */
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0 15px;
+      box-sizing: border-box;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      user-select: none;
+    }
+    #top-bar button {
+      background: none;
+      border: none;
+      font-size: 16px;
+      color: #007bff;
+      cursor: pointer;
+      padding: 5px 10px;
+      outline: none;
+      transition: color 0.3s ease;
+    }
+    #top-bar button:hover {
+      color: #0056b3;
+    }
+
+    .container {
+      width: 100vw;
+      height: calc(100dvh - 40px);
+      max-width: 100vw;
+      max-height: 100vh;
+      box-sizing: border-box;
+      margin: 0 auto;
+      padding: 60px 0 0 0; /* 상단바 높이만큼 padding-top 추가 */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .main-buttons {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 40px; 
+    }
+
+    .window-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 15px;
+      justify-content: center;
+      width: 100%;
+      max-width: 280px;
+      margin: 20px auto;
+    }
+
+    .window-grid button {
+      width: 100%;
+      height: 120px;
+      font-size: 18px;
+      border-radius: 5px;
+      cursor: pointer;
+      box-sizing: border-box;
+      transition: background-color 0.3s ease;
+    }
+
+    .window-grid button:hover {
+      background-color: #007bff;
+      color: white;
+    }
+
+    #settings-info-tabs {
+      width: 100%;
+      max-width: 280px;
+      margin: 10px auto 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      box-sizing: border-box;
+    }
+
+    #settings-info-tabs button {
+      flex: 1;
+      margin: 0;
+      border: 2px solid black;
+      font-size: 16px;
+      padding: 10px 0;
+      cursor: pointer;
+      box-sizing: border-box;
+      background-color: #f0f0f0;
+      transition: background-color 0.3s;
+      border-radius: 5px;
+    }
+
+    #settings-info-tabs button.active-tab {
+      background-color: #d0d0d0;
+      font-weight: bold;
+      border-color: #007bff;
+    }
+
+    #timer-settings {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: slider-vertical;
+      appearance: slider-horizontal;
+      width: 8px;
+      height: 150px;
+      writing-mode: bt-lr;
+      margin: 0 auto;
+    }
+
+    ruby rt {
+      font-size: 14px;
+      color: gray;
+    }
+    .progress-container {
+      width: 100%;
+      height: 10px;
+      background-color: #eee;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .progress-bar {
+      height: 10px;
+      background-color: #007bff;
+      width: 100%;
+      transition: width 0.1s linear;
+    }
+    .font-small #question {
+      font-size: 20px !important;
+    }
+    .font-normal #question {
+      font-size: 28px !important;
+    }
+    .font-large #question {
+      font-size: 36px !important;
+    }
+    #settings label {
+      cursor: pointer;
+    }
+    .slider-group {
+      margin: 20px 0;
+    }
+    .slider-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 16px;
+    }
+    .slider-group input[type="number"] {
+      width: 80px;
+      font-size: 16px;
+      padding: 5px;
+      text-align: center;
+    }
+    input[type=range] {
+      width: 80%;
+    }
+    .value {
+      font-size: 16px;
+      margin-top: 5px;
+    }
+    #info-text {
+      margin-top: 20px;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    #chat-practice {
+      max-width: 90vw;
+      margin: auto;
+      padding: 15px;
+      box-sizing: border-box;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: calc(100dvh - 40px);
+    }
+
+    #chatTimerArea {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .timer-bar-wrapper {
+      width: 300px;
+      height: 10px;
+      background: #ddd;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    #chatTimerBar {
+      height: 100%;
+      width: 100%;
+      background: #4caf50;
+      transition: width 1s linear;
+    }
+
+    #chatTimer {
+      font-size: 14px;
+      color: #333;
+    }
+
+    #chatTimerToggleBtn {
+      font-size: 14px;
+      padding: 6px 12px;
+    }
+
+    #chatBox {
+      background: white;
+      border: 1px solid #ccc;
+      overflow-y: auto;
+      padding: 10px;
+      font-size: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      /* 💡 남는 공간을 전부 차지 */
+      flex-grow: 1;
+      min-height: 0;
+    }
+
+    #chatInput {
+      width: 100%;
+      font-size: 18px;
+      padding: 8px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+    .chat-msg {
+      max-width: 80%;
+      word-wrap: break-word;
+      padding: 6px 12px;
+      border-radius: 10px;
+      user-select: text;
+      line-height: 1.3;
+    }
+    .chat-msg.bot {
+      background: white;
+      color: black;
+      align-self: flex-start;
+      text-align: left;
+    }
+    .chat-msg.bot.correct {
+      background: #d0f0d0;
+      color: black;
+    }
+    .chat-msg.user {
+      background: #f0f0f0;
+      color: gray;
+      align-self: flex-end;
+      text-align: right;
+      display: block;
+    }
+    .chat-msg.expected {
+      background: #e0e0e0;
+      color: #666666;
+      align-self: flex-end;
+      text-align: right;
+      font-style: italic;
+      border: 1px dashed #999999;
+      user-select: none;
+      pointer-events: none;
+    }
+    #chatInput {
+      width: 100%;
+      font-size: 20px;
+      padding: 8px;
+      box-sizing: border-box;
+      vertical-align: middle;
+    }
+    #chatBackBtn {
+      margin-top: 10px;
+      width: 270px;
+      align-self: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 고정 바 -->
+  <div id="top-bar">
+    <button onclick="backToMain()">메인</button>
+  </div>
+
+  <div class="container">
+
+    <!-- 메인 화면 -->
+    <div id="main" class="screen active">
+      <h1>톡톡 일본어</h1>
+
+       <div class="main-buttons">
+        <div id="practice-buttons" class="window-grid">
+          <button onclick="startPractice('char')">글자 연습</button>
+          <button onclick="startPractice('word')">단어 연습</button>
+          <button onclick="startPractice('sentence')">문장 연습</button>
+          <button onclick="startChatPractice()">채팅 연습</button>
+        </div>
+      </div>
+
+      <div id="settings-info-tabs">
+        <button id="settings-tab-btn" class="active-tab" onclick="showSettings()">설정</button>
+        <button id="info-tab-btn" onclick="showInfo()">정보</button>
+      </div>
+    </div>
+
+    <!-- 연습 화면 (자리, 단어, 문장) -->
+    <div id="practice" class="screen font-normal">
+      <div class="progress-container" id="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <h2 id="mode-title"></h2>
+      <div id="question" style="margin: 10px;"></div>
+      <input id="answer" type="text" autocomplete="off" />
+      <div id="feedback" style="margin-top: 10px; color: green;"></div>
+    </div>
+
+    <!-- 설정 화면 -->
+    <div id="settings" class="screen">
+
+      <div>
+        <h3>글자 크기</h3>
+        <label><input type="radio" name="fontSize" value="small"> 작게</label>
+        <label><input type="radio" name="fontSize" value="normal" checked> 보통</label>
+        <label><input type="radio" name="fontSize" value="large"> 크게</label>
+      </div>
+
+      
+
+      <!-- 글자 수 설정 -->
+      <div id="problem-count-settings" style="display: flex; flex-direction: column; gap: 12px; max-width: 300px; margin: 0 auto;">
+        <div>
+          <label for="charCount">글자 문제 수 (1~50):</label>
+          <input type="number" id="charCount" min="1" max="50" value="5" />
+        </div>
+        <div>
+          <label for="wordCount">단어 문제 수 (1~50):</label>
+          <input type="number" id="wordCount" min="1" max="50" value="5" />
+        </div>
+        <div>
+          <label for="sentenceCount">문장 문제 수 (1~50):</label>
+          <input type="number" id="sentenceCount" min="1" max="50" value="3" />
+        </div>
+      </div>
+
+      <!-- 나머지 설정들 (폰트 크기, 타이머 등) -->
+
+      <div>
+        <h3>타이머 사용</h3>
+        <label><input type="checkbox" id="timerToggle"> 타이머 켜기</label>
+      </div>
+
+      <div>
+        <h3>타이머 조정</h3>
+
+        <div id="timer-settings">
+          <div class="slider-group">
+            <label for="charTime">글자: <span id="charTimeVal">5</span>초</label>
+            <input type="range" id="charTime" min="2" max="7" step="1" value="5" />
+          </div>
+
+          <div class="slider-group">
+            <label for="wordTime">단어: <span id="wordTimeVal">5</span>초</label>
+            <input type="range" id="wordTime" min="2" max="7" step="1" value="5" />
+          </div>
+
+          <div class="slider-group">
+            <label for="sentenceTime">문장: <span id="sentenceTimeVal">40</span>초</label>
+            <input type="range" id="sentenceTime" min="10" max="60" step="5" value="40" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 정보 화면 -->
+    <div id="info" class="screen" style="padding: 20px;">
+      <h2>정보</h2>
+      <div id="info-text">
+        개발자 강민서<br />
+        감수자 막둥이
+      </div>
+    </div>
+
+    <!-- 채팅 연습 화면 -->
+    <div id="chat-practice" class="screen" style="display:none;">
+      <div id="chatTimerArea">
+        <div class="timer-bar-wrapper">
+          <div id="chatTimerBar"></div>
+        </div>
+        <div id="chatTimer">⏱ 타이머 켜짐</div>
+        <button id="chatTimerToggleBtn" onclick="toggleChatTimer()">⏱ 타이머 끄기</button>
+      </div>
+
+      <div id="chatBox"></div>
+
+      <input type="text" id="chatInput" placeholder="답장을 입력하세요..." autocomplete="off" />
+    </div>
+
+  </div>
+
+<script>
+  function showSettings() {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    document.getElementById('settings').classList.add('active');
+    document.getElementById('settings-tab-btn').classList.add('active-tab');
+    document.getElementById('info-tab-btn').classList.remove('active-tab');
+  }
+
+  function showInfo() {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    document.getElementById('info').classList.add('active');
+    document.getElementById('info-tab-btn').classList.add('active-tab');
+    document.getElementById('settings-tab-btn').classList.remove('active-tab');
+  }
+
+  function backToMainFromSettings() {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    document.getElementById('main').classList.add('active');
+    document.getElementById('settings-tab-btn').classList.remove('active-tab');
+  }
+
+  function backToMainFromInfo() {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    document.getElementById('main').classList.add('active');
+    document.getElementById('info-tab-btn').classList.remove('active-tab');
+  }
+
+  function backToMain() {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    document.getElementById('main').classList.add('active');
+    document.getElementById('settings-tab-btn').classList.remove('active-tab');
+    document.getElementById('info-tab-btn').classList.remove('active-tab');
+  }
+
+  const fullData = {
+    char: [
+      "あ","い","う","え","お",
+      "か","き","く","け","こ",
+      "さ","し","す","せ","そ",
+      "た","ち","つ","て","と",
+      "な","に","ぬ","ね","の",
+      "は","ひ","ふ","へ","ほ",
+      "ま","み","む","め","も",
+      "や","ゆ","よ",
+      "ら","り","る","れ","ろ",
+      "わ","を","ん",
+      // 음절 확장 (가타카나 음절에서 온 것 포함)
+      "が","ぎ","ぐ","げ","ご",
+      "ざ","じ","ず","ぜ","ぞ",
+      "だ","ぢ","づ","で","ど",
+      "ば","び","ぶ","べ","ぼ",
+      "ぱ","ぴ","ぷ","ぺ","ぽ",
+      // 콤비네이션(소형야,유,요와 합쳐지는 음절)
+      "きゃ","きゅ","きょ",
+      "しゃ","しゅ","しょ",
+      "ちゃ","ちゅ","ちょ",
+      "にゃ","にゅ","にょ",
+      "ひゃ","ひゅ","ひょ",
+      "みゃ","みゅ","みょ",
+      "りゃ","りゅ","りょ",
+      "ぎゃ","ぎゅ","ぎょ",
+      "じゃ","じゅ","じょ",
+      "びゃ","びゅ","びょ",
+      "ぴゃ","ぴゅ","ぴょ"
+    ],
+    word: [
+      {"kanji":"学校","kana":"がっこう"},
+      {"kanji":"電車","kana":"でんしゃ"},
+      {"kanji":"時間","kana":"じかん"},
+      {"kanji":"勉強","kana":"べんきょう"},
+      {"kanji":"先生","kana":"せんせい"},
+      {"kanji":"食事","kana":"しょくじ"},
+      {"kanji":"友達","kana":"ともだち"},
+      {"kanji":"運動","kana":"うんどう"},
+      {"kanji":"図書館","kana":"としょかん"},
+      {"kanji":"試験","kana":"しけん"},
+      {"kanji":"病院","kana":"びょういん"},
+      {"kanji":"会社","kana":"かいしゃ"},
+      {"kanji":"電話","kana":"でんわ"},
+      {"kanji":"天気","kana":"てんき"},
+      {"kanji":"映画","kana":"えいが"},
+      {"kanji":"朝ごはん","kana":"あさごはん"},
+      {"kanji":"昼ごはん","kana":"ひるごはん"},
+      {"kanji":"晩ごはん","kana":"ばんごはん"},
+      {"kanji":"買い物","kana":"かいもの"},
+      {"kanji":"旅行","kana":"りょこう"},
+      {"kanji":"空港","kana":"くうこう"},
+      {"kanji":"新幹線","kana":"しんかんせん"},
+      {"kanji":"道","kana":"みち"},
+      {"kanji":"駅","kana":"えき"},
+      {"kanji":"郵便局","kana":"ゆうびんきょく"},
+      {"kanji":"銀行","kana":"ぎんこう"},
+      {"kanji":"警察","kana":"けいさつ"},
+      {"kanji":"病気","kana":"びょうき"},
+      {"kanji":"薬","kana":"くすり"},
+      {"kanji":"痛み","kana":"いたみ"},
+      {"kanji":"歯医者","kana":"はいしゃ"},
+      {"kanji":"映画館","kana":"えいがかん"},
+      {"kanji":"図書","kana":"としょ"},
+      {"kanji":"先生","kana":"せんせい"},
+      {"kanji":"学生","kana":"がくせい"},
+      {"kanji":"大学","kana":"だいがく"},
+      {"kanji":"中学校","kana":"ちゅうがっこう"},
+      {"kanji":"小学校","kana":"しょうがっこう"},
+      {"kanji":"友人","kana":"ゆうじん"},
+      {"kanji":"家族","kana":"かぞく"},
+      {"kanji":"兄弟","kana":"きょうだい"},
+      {"kanji":"姉妹","kana":"しまい"},
+      {"kanji":"父","kana":"ちち"},
+      {"kanji":"母","kana":"はは"},
+      {"kanji":"子供","kana":"こども"},
+      {"kanji":"結婚","kana":"けっこん"},
+      {"kanji":"誕生日","kana":"たんじょうび"},
+      {"kanji":"仕事","kana":"しごと"},
+      {"kanji":"会社員","kana":"かいしゃいん"},
+      {"kanji":"休み","kana":"やすみ"},
+      {"kanji":"休日","kana":"きゅうじつ"},
+      {"kanji":"旅行","kana":"りょこう"},
+      {"kanji":"海","kana":"うみ"},
+      {"kanji":"山","kana":"やま"},
+      {"kanji":"川","kana":"かわ"},
+      {"kanji":"森","kana":"もり"},
+      {"kanji":"天気","kana":"てんき"},
+      {"kanji":"雨","kana":"あめ"},
+      {"kanji":"雪","kana":"ゆき"},
+      {"kanji":"風","kana":"かぜ"},
+      {"kanji":"火","kana":"ひ"},
+      {"kanji":"水","kana":"みず"},
+      {"kanji":"木","kana":"き"},
+      {"kanji":"金","kana":"きん"},
+      {"kanji":"土","kana":"つち"},
+      {"kanji":"空","kana":"そら"},
+      {"kanji":"星","kana":"ほし"},
+      {"kanji":"月","kana":"つき"},
+      {"kanji":"日","kana":"ひ"},
+      {"kanji":"朝","kana":"あさ"},
+      {"kanji":"昼","kana":"ひる"},
+      {"kanji":"夜","kana":"よる"},
+      {"kanji":"今","kana":"いま"},
+      {"kanji":"今日","kana":"きょう"},
+      {"kanji":"昨日","kana":"きのう"},
+      {"kanji":"明日","kana":"あした"},
+      {"kanji":"先週","kana":"せんしゅう"},
+      {"kanji":"今週","kana":"こんしゅう"},
+      {"kanji":"来週","kana":"らいしゅう"},
+      {"kanji":"毎日","kana":"まいにち"},
+      {"kanji":"毎週","kana":"まいしゅう"},
+      {"kanji":"毎月","kana":"まいつき"},
+      {"kanji":"毎年","kana":"まいとし"},
+      {"kanji":"時間","kana":"じかん"},
+      {"kanji":"分","kana":"ふん"},
+      {"kanji":"秒","kana":"びょう"},
+      {"kanji":"朝食","kana":"ちょうしょく"},
+      {"kanji":"昼食","kana":"ちゅうしょく"},
+      {"kanji":"夕食","kana":"ゆうしょく"},
+      {"kanji":"水曜日","kana":"すいようび"},
+      {"kanji":"木曜日","kana":"もくようび"},
+      {"kanji":"金曜日","kana":"きんようび"},
+      {"kanji":"土曜日","kana":"どようび"},
+      {"kanji":"日曜日","kana":"にちようび"},
+      {"kanji":"月曜日","kana":"げつようび"},
+      {"kanji":"火曜日","kana":"かようび"},
+      {"kanji":"自転車","kana":"じてんしゃ"},
+      {"kanji":"車","kana":"くるま"},
+      {"kanji":"バス","kana":"ばす"},
+      {"kanji":"電車","kana":"でんしゃ"},
+      {"kanji":"飛行機","kana":"ひこうき"},
+      {"kanji":"駅","kana":"えき"},
+      {"kanji":"道路","kana":"どうろ"},
+      {"kanji":"橋","kana":"はし"},
+      {"kanji":"信号","kana":"しんごう"},
+      {"kanji":"交差点","kana":"こうさてん"},
+      {"kanji":"道","kana":"みち"},
+      {"kanji":"旅行","kana":"りょこう"},
+      {"kanji":"天気予報","kana":"てんきよほう"},
+      {"kanji":"傘","kana":"かさ"},
+      {"kanji":"帽子","kana":"ぼうし"},
+      {"kanji":"手袋","kana":"てぶくろ"},
+      {"kanji":"靴","kana":"くつ"},
+      {"kanji":"服","kana":"ふく"},
+      {"kanji":"家","kana":"いえ"},
+      {"kanji":"部屋","kana":"へや"},
+      {"kanji":"窓","kana":"まど"},
+      {"kanji":"ドア","kana":"どあ"},
+      {"kanji":"机","kana":"つくえ"},
+      {"kanji":"椅子","kana":"いす"},
+      {"kanji":"本","kana":"ほん"},
+      {"kanji":"雑誌","kana":"ざっし"},
+      {"kanji":"新聞","kana":"しんぶん"},
+      {"kanji":"テレビ","kana":"てれび"},
+      {"kanji":"冷蔵庫","kana":"れいぞうこ"},
+      {"kanji":"電子レンジ","kana":"でんしれんじ"},
+      {"kanji":"掃除機","kana":"そうじき"},
+      {"kanji":"洗濯機","kana":"せんたくき"},
+      {"kanji":"電話","kana":"でんわ"},
+      {"kanji":"携帯電話","kana":"けいたいでんわ"},
+      {"kanji":"コンピューター","kana":"こんぴゅうたあ"},
+      {"kanji":"インターネット","kana":"いんたあねっと"},
+      {"kanji":"学校","kana":"がっこう"},
+      {"kanji":"図書館","kana":"としょかん"},
+      {"kanji":"病院","kana":"びょういん"},
+      {"kanji":"銀行","kana":"ぎんこう"},
+      {"kanji":"郵便局","kana":"ゆうびんきょく"},
+      {"kanji":"警察署","kana":"けいさつしょ"},
+      {"kanji":"消防署","kana":"しょうぼうしょ"},
+      {"kanji":"公園","kana":"こうえん"},
+      {"kanji":"スーパー","kana":"すうぱあ"},
+      {"kanji":"コンビニ","kana":"こんびに"},
+      {"kanji":"レストラン","kana":"れすとらん"},
+      {"kanji":"カフェ","kana":"かふぇ"},
+      {"kanji":"映画館","kana":"えいがかん"},
+      {"kanji":"駅","kana":"えき"},
+      {"kanji":"空港","kana":"くうこう"},
+      {"kanji":"ホテル","kana":"ほてる"},
+      {"kanji":"バス停","kana":"ばすてい"},
+      {"kanji":"駅前","kana":"えきまえ"},
+      {"kanji":"郵便","kana":"ゆうびん"},
+      {"kanji":"手紙","kana":"てがみ"},
+      {"kanji":"本屋","kana":"ほんや"},
+      {"kanji":"薬局","kana":"やっきょく"},
+      {"kanji":"病気","kana":"びょうき"},
+      {"kanji":"薬","kana":"くすり"},
+      {"kanji":"健康","kana":"けんこう"},
+      {"kanji":"先生","kana":"せんせい"},
+      {"kanji":"学生","kana":"がくせい"},
+      {"kanji":"学校","kana":"がっこう"},
+      {"kanji":"授業","kana":"じゅぎょう"},
+      {"kanji":"宿題","kana":"しゅくだい"},
+      {"kanji":"試験","kana":"しけん"},
+      {"kanji":"勉強","kana":"べんきょう"},
+      {"kanji":"本","kana":"ほん"},
+      {"kanji":"教科書","kana":"きょうかしょ"},
+      {"kanji":"辞書","kana":"じしょ"},
+      {"kanji":"文法","kana":"ぶんぽう"},
+      {"kanji":"漢字","kana":"かんじ"},
+      {"kanji":"単語","kana":"たんご"},
+      {"kanji":"話す","kana":"はなす"},
+      {"kanji":"聞く","kana":"きく"},
+      {"kanji":"読む","kana":"よむ"},
+      {"kanji":"書く","kana":"かく"},
+      {"kanji":"食べる","kana":"たべる"},
+      {"kanji":"飲む","kana":"のむ"},
+      {"kanji":"行く","kana":"いく"},
+      {"kanji":"来る","kana":"くる"},
+      {"kanji":"見る","kana":"みる"},
+      {"kanji":"買う","kana":"かう"},
+      {"kanji":"使う","kana":"つかう"},
+      {"kanji":"話題","kana":"わだい"},
+      {"kanji":"意見","kana":"いけん"},
+      {"kanji":"質問","kana":"しつもん"},
+      {"kanji":"答え","kana":"こたえ"},
+      {"kanji":"説明","kana":"せつめい"},
+      {"kanji":"理解","kana":"りかい"},
+      {"kanji":"知る","kana":"しる"},
+      {"kanji":"知識","kana":"ちしき"},
+      {"kanji":"経験","kana":"けいけん"},
+      {"kanji":"楽しい","kana":"たのしい"},
+      {"kanji":"嬉しい","kana":"うれしい"},
+      {"kanji":"悲しい","kana":"かなしい"},
+      {"kanji":"疲れた","kana":"つかれた"},
+      {"kanji":"忙しい","kana":"いそがしい"},
+      {"kanji":"元気","kana":"げんき"},
+      {"kanji":"健康","kana":"けんこう"},
+      {"kanji":"病気","kana":"びょうき"},
+      {"kanji":"痛い","kana":"いたい"},
+      {"kanji":"眠い","kana":"ねむい"},
+      {"kanji":"暑い","kana":"あつい"},
+      {"kanji":"寒い","kana":"さむい"},
+      {"kanji":"熱い","kana":"あつい"},
+      {"kanji":"冷たい","kana":"つめたい"},
+      {"kanji":"高い","kana":"たかい"},
+      {"kanji":"安い","kana":"やすい"},
+      {"kanji":"新しい","kana":"あたらしい"},
+      {"kanji":"古い","kana":"ふるい"},
+      {"kanji":"大きい","kana":"おおきい"},
+      {"kanji":"小さい","kana":"ちいさい"},
+      {"kanji":"長い","kana":"ながい"},
+      {"kanji":"短い","kana":"みじかい"},
+      {"kanji":"広い","kana":"ひろい"},
+      {"kanji":"狭い","kana":"せまい"},
+      {"kanji":"良い","kana":"いい"},
+      {"kanji":"悪い","kana":"わるい"},
+      {"kanji":"好き","kana":"すき"},
+      {"kanji":"嫌い","kana":"きらい"},
+      {"kanji":"上手","kana":"じょうず"},
+      {"kanji":"下手","kana":"へた"},
+      {"kanji":"簡単","kana":"かんたん"},
+      {"kanji":"難しい","kana":"むずかしい"},
+      {"kanji":"早い","kana":"はやい"},
+      {"kanji":"遅い","kana":"おそい"},
+      {"kanji":"楽しい","kana":"たのしい"},
+      {"kanji":"面白い","kana":"おもしろい"},
+      {"kanji":"疲れる","kana":"つかれる"},
+      {"kanji":"考える","kana":"かんがえる"},
+      {"kanji":"忘れる","kana":"わすれる"},
+      {"kanji":"覚える","kana":"おぼえる"},
+      {"kanji":"教える","kana":"おしえる"},
+      {"kanji":"働く","kana":"はたらく"},
+      {"kanji":"休む","kana":"やすむ"},
+      {"kanji":"走る","kana":"はしる"},
+      {"kanji":"歩く","kana":"あるく"},
+      {"kanji":"泳ぐ","kana":"およぐ"},
+      {"kanji":"待つ","kana":"まつ"},
+      {"kanji":"使う","kana":"つかう"},
+      {"kanji":"作る","kana":"つくる"},
+      {"kanji":"買う","kana":"かう"},
+      {"kanji":"売る","kana":"うる"},
+      {"kanji":"読む","kana":"よむ"},
+      {"kanji":"書く","kana":"かく"},
+      {"kanji":"話す","kana":"はなす"},
+      {"kanji":"聞く","kana":"きく"},
+      {"kanji":"見る","kana":"みる"},
+      {"kanji":"寝る","kana":"ねる"},
+      {"kanji":"起きる","kana":"おきる"},
+      {"kanji":"遊ぶ","kana":"あそぶ"},
+      {"kanji":"笑う","kana":"わらう"},
+      {"kanji":"泣く","kana":"なく"},
+      {"kanji":"怒る","kana":"おこる"},
+      {"kanji":"好き","kana":"すき"},
+      {"kanji":"嫌い","kana":"きらい"},
+      {"kanji":"大丈夫","kana":"だいじょうぶ"},
+      {"kanji":"必要","kana":"ひつよう"},
+      {"kanji":"可能","kana":"かのう"},
+      {"kanji":"不可能","kana":"ふかのう"},
+      {"kanji":"安全","kana":"あんぜん"},
+      {"kanji":"危険","kana":"きけん"},
+      {"kanji":"簡単","kana":"かんたん"},
+      {"kanji":"複雑","kana":"ふくざつ"},
+      {"kanji":"明るい","kana":"あかるい"},
+      {"kanji":"暗い","kana":"くらい"},
+      {"kanji":"元気","kana":"げんき"},
+      {"kanji":"疲れた","kana":"つかれた"},
+      {"kanji":"暑い","kana":"あつい"},
+      {"kanji":"寒い","kana":"さむい"},
+      {"kanji":"痛い","kana":"いたい"},
+      {"kanji":"楽しい","kana":"たのしい"},
+      {"kanji":"悲しい","kana":"かなしい"},
+      {"kanji":"忙しい","kana":"いそがしい"},
+      {"kanji":"嬉しい","kana":"うれしい"},
+      {"kanji":"上手","kana":"じょうず"},
+      {"kanji":"下手","kana":"へた"},
+      {"kanji":"好き","kana":"すき"},
+      {"kanji":"嫌い","kana":"きらい"},
+      {"kanji":"強い","kana":"つよい"},
+      {"kanji":"弱い","kana":"よわい"},
+      {"kanji":"太い","kana":"ふとい"},
+      {"kanji":"細い","kana":"ほそい"},
+      {"kanji":"長い","kana":"ながい"},
+      {"kanji":"短い","kana":"みじかい"},
+      {"kanji":"高い","kana":"たかい"},
+      {"kanji":"低い","kana":"ひくい"},
+      {"kanji":"深い","kana":"ふかい"},
+      {"kanji":"浅い","kana":"あさい"},
+      {"kanji":"広い","kana":"ひろい"},
+      {"kanji":"狭い","kana":"せまい"},
+      {"kanji":"早い","kana":"はやい"},
+      {"kanji":"遅い","kana":"おそい"},
+      {"kanji":"新しい","kana":"あたらしい"},
+      {"kanji":"古い","kana":"ふるい"},
+      {"kanji":"面白い","kana":"おもしろい"},
+      {"kanji":"楽しい","kana":"たのしい"},
+      {"kanji":"美しい","kana":"うつくしい"},
+      {"kanji":"綺麗","kana":"きれい"},
+      {"kanji":"便利","kana":"べんり"},
+      {"kanji":"不便","kana":"ふべん"},
+      {"kanji":"健康","kana":"けんこう"},
+      {"kanji":"病気","kana":"びょうき"},
+      {"kanji":"元気","kana":"げんき"},
+      {"kanji":"疲れた","kana":"つかれた"},
+      {"kanji":"面倒","kana":"めんどう"},
+      {"kanji":"危険","kana":"きけん"},
+      {"kanji":"安全","kana":"あんぜん"},
+      {"kanji":"静か","kana":"しずか"},
+      {"kanji":"賑やか","kana":"にぎやか"},
+      {"kanji":"暑い","kana":"あつい"},
+      {"kanji":"寒い","kana":"さむい"},
+      {"kanji":"暑い","kana":"あつい"},
+      {"kanji":"冷たい","kana":"つめたい"},
+      {"kanji":"楽しい","kana":"たのしい"},
+      {"kanji":"悲しい","kana":"かなしい"},
+      {"kanji":"嬉しい","kana":"うれしい"},
+      {"kanji":"怒る","kana":"おこる"},
+      {"kanji":"笑う","kana":"わらう"},
+      {"kanji":"泣く","kana":"なく"},
+      {"kanji":"話す","kana":"はなす"},
+      {"kanji":"聞く","kana":"きく"},
+      {"kanji":"見る","kana":"みる"},
+      {"kanji":"読む","kana":"よむ"},
+      {"kanji":"書く","kana":"かく"},
+      {"kanji":"食べる","kana":"たべる"},
+      {"kanji":"飲む","kana":"のむ"},
+      {"kanji":"行く","kana":"いく"},
+      {"kanji":"来る","kana":"くる"},
+      {"kanji":"帰る","kana":"かえる"},
+      {"kanji":"歩く","kana":"あるく"},
+      {"kanji":"走る","kana":"はしる"},
+      {"kanji":"待つ","kana":"まつ"},
+      {"kanji":"使う","kana":"つかう"},
+      {"kanji":"作る","kana":"つくる"},
+      {"kanji":"買う","kana":"かう"},
+      {"kanji":"売る","kana":"うる"},
+      {"kanji":"教える","kana":"おしえる"},
+      {"kanji":"覚える","kana":"おぼえる"},
+      {"kanji":"忘れる","kana":"わすれる"},
+      {"kanji":"開ける","kana":"あける"},
+      {"kanji":"閉める","kana":"しめる"},
+      {"kanji":"乗る","kana":"のる"},
+      {"kanji":"降りる","kana":"おりる"},
+      {"kanji":"洗う","kana":"あらう"},
+      {"kanji":"掃除する","kana":"そうじする"},
+      {"kanji":"寝る","kana":"ねる"},
+      {"kanji":"起きる","kana":"おきる"},
+      {"kanji":"遊ぶ","kana":"あそぶ"},
+      {"kanji":"働く","kana":"はたらく"},
+      {"kanji":"休む","kana":"やすむ"},
+      {"kanji":"話す","kana":"はなす"},
+      {"kanji":"聞く","kana":"きく"},
+      {"kanji":"見せる","kana":"みせる"},
+      {"kanji":"送る","kana":"おくる"},
+      {"kanji":"受ける","kana":"うける"},
+      {"kanji":"着る","kana":"きる"},
+      {"kanji":"脱ぐ","kana":"ぬぐ"},
+      {"kanji":"乗り換える","kana":"のりかえる"},
+      {"kanji":"借りる","kana":"かりる"},
+      {"kanji":"返す","kana":"かえす"},
+      {"kanji":"待つ","kana":"まつ"},
+      {"kanji":"急ぐ","kana":"いそぐ"},
+      {"kanji":"助ける","kana":"たすける"},
+      {"kanji":"話す","kana":"はなす"},
+      {"kanji":"笑う","kana":"わらう"},
+      {"kanji":"泣く","kana":"なく"},
+      {"kanji":"怒る","kana":"おこる"},
+      {"kanji":"休む","kana":"やすむ"},
+      {"kanji":"起きる","kana":"おきる"},
+      {"kanji":"寝る","kana":"ねる"},
+      {"kanji":"勉強する","kana":"べんきょうする"},
+      {"kanji":"運動する","kana":"うんどうする"},
+      {"kanji":"旅行する","kana":"りょこうする"},
+      {"kanji":"掃除する","kana":"そうじする"},
+      {"kanji":"洗濯する","kana":"せんたくする"},
+      {"kanji":"料理する","kana":"りょうりする"},
+      {"kanji":"買い物する","kana":"かいものする"},
+      {"kanji":"電話する","kana":"でんわする"},
+      {"kanji":"訪問する","kana":"ほうもんする"},
+      {"kanji":"会う","kana":"あう"},
+      {"kanji":"話す","kana":"はなす"},
+      {"kanji":"聞く","kana":"きく"},
+      {"kanji":"見る","kana":"みる"},
+      {"kanji":"思う","kana":"おもう"},
+      {"kanji":"感じる","kana":"かんじる"},
+      {"kanji":"決める","kana":"きめる"},
+      {"kanji":"始める","kana":"はじめる"},
+      {"kanji":"終わる","kana":"おわる"},
+      {"kanji":"続ける","kana":"つづける"},
+      {"kanji":"止める","kana":"やめる"},
+      {"kanji":"変わる","kana":"かわる"},
+      {"kanji":"作る","kana":"つくる"},
+      {"kanji":"使う","kana":"つかう"},
+      {"kanji":"置く","kana":"おく"},
+      {"kanji":"持つ","kana":"もつ"},
+      {"kanji":"取る","kana":"とる"},
+      {"kanji":"帰る","kana":"かえる"},
+      {"kanji":"来る","kana":"くる"},
+      {"kanji":"行く","kana":"いく"},
+      {"kanji":"来る","kana":"くる"},
+      {"kanji":"帰る","kana":"かえる"},
+      {"kanji":"開ける","kana":"あける"},
+      {"kanji":"閉める","kana":"しめる"},
+      {"kanji":"入る","kana":"はいる"},
+      {"kanji":"出る","kana":"でる"},
+      {"kanji":"座る","kana":"すわる"},
+      {"kanji":"立つ","kana":"たつ"},
+      {"kanji":"走る","kana":"はしる"},
+      {"kanji":"歩く","kana":"あるく"},
+      {"kanji":"泳ぐ","kana":"およぐ"},
+      {"kanji":"飛ぶ","kana":"とぶ"},
+      {"kanji":"登る","kana":"のぼる"},
+      {"kanji":"降りる","kana":"おりる"},
+      {"kanji":"乗る","kana":"のる"},
+      {"kanji":"降りる","kana":"おりる"},
+      {"kanji":"着る","kana":"きる"},
+      {"kanji":"脱ぐ","kana":"ぬぐ"},
+      {"kanji":"洗う","kana":"あらう"},
+      {"kanji":"掃除する","kana":"そうじする"},
+      {"kanji":"料理する","kana":"りょうりする"},
+      {"kanji":"話す","kana":"はなす"},
+      {"kanji":"聞く","kana":"きく"},
+      {"kanji":"見る","kana":"みる"},
+      {"kanji":"書く","kana":"かく"},
+      {"kanji":"読む","kana":"よむ"},
+      {"kanji":"覚える","kana":"おぼえる"},
+      {"kanji":"忘れる","kana":"わすれる"},
+      {"kanji":"教える","kana":"おしえる"},
+      {"kanji":"勉強する","kana":"べんきょうする"},
+      {"kanji":"働く","kana":"はたらく"},
+      {"kanji":"休む","kana":"やすむ"},
+      {"kanji":"遊ぶ","kana":"あそぶ"},
+      {"kanji":"休憩する","kana":"きゅうけいする"},
+      {"kanji":"旅行する","kana":"りょこうする"},
+      {"kanji":"散歩する","kana":"さんぽする"},
+      {"kanji":"運動する","kana":"うんどうする"},
+      {"kanji":"掃除する","kana":"そうじする"},
+      {"kanji":"洗濯する","kana":"せんたくする"},
+      {"kanji":"買い物する","kana":"かいものする"},
+      {"kanji":"電話する","kana":"でんわする"},
+      {"kanji":"メールする","kana":"めーるする"},
+      {"kanji":"会う","kana":"あう"},
+      {"kanji":"話す","kana":"はなす"},
+      {"kanji":"聞く","kana":"きく"},
+      {"kanji":"見る","kana":"みる"},
+      {"kanji":"送る","kana":"おくる"},
+      {"kanji":"受け取る","kana":"うけとる"},
+      {"kanji":"借りる","kana":"かりる"},
+      {"kanji":"返す","kana":"かえす"},
+      {"kanji":"貸す","kana":"かす"},
+      {"kanji":"選ぶ","kana":"えらぶ"},
+      {"kanji":"決める","kana":"きめる"},
+      {"kanji":"始める","kana":"はじめる"},
+      {"kanji":"終わる","kana":"おわる"},
+      {"kanji":"続ける","kana":"つづける"},
+      {"kanji":"止める","kana":"やめる"},
+      {"kanji":"変わる","kana":"かわる"},
+      {"kanji":"思う","kana":"おもう"},
+      {"kanji":"感じる","kana":"かんじる"},
+      {"kanji":"知る","kana":"しる"},
+      {"kanji":"理解する","kana":"りかいする"},
+      {"kanji":"覚える","kana":"おぼえる"},
+      {"kanji":"忘れる","kana":"わすれる"},
+      {"kanji":"助ける","kana":"たすける"},
+      {"kanji":"守る","kana":"まもる"},
+      {"kanji":"話す","kana":"はなす"},
+      {"kanji":"聞く","kana":"きく"},
+      {"kanji":"伝える","kana":"つたえる"},
+      {"kanji":"教える","kana":"おしえる"},
+      {"kanji":"学ぶ","kana":"まなぶ"},
+      {"kanji":"勉強する","kana":"べんきょうする"},
+      {"kanji":"覚える","kana":"おぼえる"},
+      {"kanji":"忘れる","kana":"わすれる"},
+      {"kanji":"作る","kana":"つくる"},
+      {"kanji":"使う","kana":"つかう"},
+      {"kanji":"買う","kana":"かう"},
+      {"kanji":"売る","kana":"うる"},
+      {"kanji":"送る","kana":"おくる"},
+      {"kanji":"受け取る","kana":"うけとる"},
+      {"kanji":"借りる","kana":"かりる"},
+      {"kanji":"返す","kana":"かえす"},
+      {"kanji":"持つ","kana":"もつ"},
+      {"kanji":"置く","kana":"おく"},
+      {"kanji":"開ける","kana":"あける"},
+      {"kanji":"閉める","kana":"しめる"},
+      {"kanji":"入る","kana":"はいる"},
+      {"kanji":"出る","kana":"でる"},
+      {"kanji":"立つ","kana":"たつ"},
+      {"kanji":"座る","kana":"すわる"},
+      {"kanji":"歩く","kana":"あるく"},
+      {"kanji":"走る","kana":"はしる"},
+      {"kanji":"飛ぶ","kana":"とぶ"},
+      {"kanji":"泳ぐ","kana":"およぐ"},
+      {"kanji":"登る","kana":"のぼる"},
+      {"kanji":"降りる","kana":"おりる"},
+      {"kanji":"乗る","kana":"のる"},
+      {"kanji":"降りる","kana":"おりる"},
+      {"kanji":"着る","kana":"きる"},
+      {"kanji":"脱ぐ","kana":"ぬぐ"},
+      {"kanji":"洗う","kana":"あらう"},
+      {"kanji":"掃除する","kana":"そうじする"},
+      {"kanji":"料理する","kana":"りょうりする"},
+      {"kanji":"話す","kana":"はなす"},
+      {"kanji":"聞く","kana":"きく"},
+      {"kanji":"見る","kana":"みる"},
+      {"kanji":"書く","kana":"かく"},
+      {"kanji":"読む","kana":"よむ"},
+      {"kanji":"覚える","kana":"おぼえる"},
+      {"kanji":"忘れる","kana":"わすれる"},
+      {"kanji":"教える","kana":"おしえる"},
+      {"kanji":"勉強する","kana":"べんきょうする"},
+      {"kanji":"働く","kana":"はたらく"},
+      {"kanji":"休む","kana":"やすむ"},
+      {"kanji":"遊ぶ","kana":"あそぶ"},
+      {"kanji":"休憩する","kana":"きゅうけいする"},
+      {"kanji":"旅行する","kana":"りょこうする"},
+      {"kanji":"散歩する","kana":"さんぽする"},
+      {"kanji":"運動する","kana":"うんどうする"},
+      {"kanji":"掃除する","kana":"そうじする"},
+      {"kanji":"洗濯する","kana":"せんたくする"},
+      {"kanji":"買い物する","kana":"かいものする"},
+      {"kanji":"電話する","kana":"でんわする"},
+      {"kanji":"メールする","kana":"めーるする"},
+      {"kanji":"会う","kana":"あう"},
+      {"kanji":"話す","kana":"はなす"},
+      {"kanji":"聞く","kana":"きく"},
+      {"kanji":"見る","kana":"みる"},
+      {"kanji":"送る","kana":"おくる"},
+      {"kanji":"受け取る","kana":"うけとる"},
+      {"kanji":"借りる","kana":"かりる"},
+      {"kanji":"返す","kana":"かえす"},
+      {"kanji":"貸す","kana":"かす"},
+      {"kanji":"選ぶ","kana":"えらぶ"},
+      {"kanji":"決める","kana":"きめる"},
+      {"kanji":"始める","kana":"はじめる"},
+      {"kanji":"終わる","kana":"おわる"},
+      {"kanji":"続ける","kana":"つづける"},
+      {"kanji":"止める","kana":"やめる"},
+      {"kanji":"変わる","kana":"かわる"},
+      {"kanji":"思う","kana":"おもう"},
+      {"kanji":"感じる","kana":"かんじる"},
+      {"kanji":"知る","kana":"しる"},
+      {"kanji":"理解する","kana":"りかいする"},
+      {"kanji":"覚える","kana":"おぼえる"},
+      {"kanji":"忘れる","kana":"わすれる"},
+      {"kanji":"助ける","kana":"たすける"},
+      {"kanji":"守る","kana":"まもる"},
+      {"kanji":"話す","kana":"はなす"},
+      {"kanji":"聞く","kana":"きく"},
+      {"kanji":"伝える","kana":"つたえる"},
+      {"kanji":"教える","kana":"おしえる"},
+      {"kanji":"学ぶ","kana":"まなぶ"},
+      {"kanji":"勉強する","kana":"べんきょうする"},
+      {"kanji":"覚える","kana":"おぼえる"},
+      {"kanji":"忘れる","kana":"わすれる"},
+      {"kanji":"作る","kana":"つくる"},
+      {"kanji":"使う","kana":"つかう"},
+      {"kanji":"買う","kana":"かう"},
+      {"kanji":"売る","kana":"うる"},
+      {"kanji":"送る","kana":"おくる"},
+      {"kanji":"受け取る","kana":"うけとる"},
+      {"kanji":"借りる","kana":"かりる"},
+      {"kanji":"返す","kana":"かえす"},
+      {"kanji":"持つ","kana":"もつ"},
+      {"kanji":"置く","kana":"おく"},
+      {"kanji":"開ける","kana":"あける"},
+      {"kanji":"閉める","kana":"しめる"},
+      {"kanji":"入る","kana":"はいる"},
+      {"kanji":"出る","kana":"でる"},
+      {"kanji":"立つ","kana":"たつ"},
+      {"kanji":"座る","kana":"すわる"},
+      {"kanji":"歩く","kana":"あるく"},
+      {"kanji":"走る","kana":"はしる"},
+      {"kanji":"飛ぶ","kana":"とぶ"},
+      {"kanji":"泳ぐ","kana":"およぐ"},
+      {"kanji":"登る","kana":"のぼる"},
+      {"kanji":"降りる","kana":"おりる"},
+      {"kanji":"乗る","kana":"のる"},
+      {"kanji":"降りる","kana":"おりる"},
+      {"kanji":"着る","kana":"きる"}
+    ],
+
+     "sentence": [
+        { "kanji": "習うより慣れろ", "kana": "ならうよりなれろ" },
+        { "kanji": "石の上にも三年", "kana": "いしのうえにもさんねん" },
+        { "kanji": "失敗は成功のもと", "kana": "しっぱいはせいこうのもと" },
+        { "kanji": "百聞は一見に如かず", "kana": "ひゃくぶんはいっけんにしかず" },
+        { "kanji": "初心忘るべからず", "kana": "しょしんわするべからず" },
+        { "kanji": "雨降って地固まる", "kana": "あめふってじかたまる" },
+        { "kanji": "井の中の蛙大海を知らず", "kana": "いのなかのかわずたいかいをしらず" },
+        { "kanji": "猿も木から落ちる", "kana": "さるもきからおちる" },
+        { "kanji": "案ずるより産むが易し", "kana": "あんずるよりうむがやすし" },
+        { "kanji": "能ある鷹は爪を隠す", "kana": "のうあるたかはつめをかくす" },
+        { "kanji": "七転び八起き", "kana": "ななころびやおき" },
+        { "kanji": "馬の耳に念仏", "kana": "うまのみみにねんぶつ" },
+        { "kanji": "縁の下の力持ち", "kana": "えんのしたのちからもち" },
+        { "kanji": "鳥なき里の蝙蝠", "kana": "とりなきさとのこうもり" },
+        { "kanji": "情けは人の為ならず", "kana": "なさけはひとのためならず" },
+        { "kanji": "灯台下暗し", "kana": "とうだいもとくらし" },
+        { "kanji": "口は災いの元", "kana": "くちはわざわいのもと" },
+        { "kanji": "転ばぬ先の杖", "kana": "ころばぬさきのつえ" },
+        { "kanji": "出る杭は打たれる", "kana": "でるくいはうたれる" },
+        { "kanji": "悪因悪果", "kana": "あくいんあっか" },
+        { "kanji": "一石二鳥", "kana": "いっせきにちょう" },
+        { "kanji": "早起きは三文の徳", "kana": "はやおきはさんもんのとく" },
+        { "kanji": "花より団子", "kana": "はなよりだんご" },
+        { "kanji": "十人十色", "kana": "じゅうにんといろ" },
+        { "kanji": "馬子にも衣装", "kana": "まごにもいしょう" },
+        { "kanji": "美人薄命", "kana": "びじんはくめい" },
+        { "kanji": "塵も積もれば山となる", "kana": "ちりもつもればやまとなる" },
+        { "kanji": "棚から牡丹餅", "kana": "たなからぼたもち" },
+        { "kanji": "狼少年", "kana": "おおかみしょうねん" },
+        { "kanji": "棚ぼた", "kana": "たなぼた" },
+        { "kanji": "情けは人の為ならず", "kana": "なさけはひとのためならず" },
+        { "kanji": "百害あって一利なし", "kana": "ひゃくがいあっていちりなし" },
+        { "kanji": "朱に交われば赤くなる", "kana": "しゅにまじわればあかくなる" },
+        { "kanji": "弘法にも筆の誤り", "kana": "こうぼうにもふでのあやまり" },
+        { "kanji": "手前味噌", "kana": "てまえみそ" },
+        { "kanji": "人の振り見て我が振り直せ", "kana": "ひとのふりみてわがふりなおせ" },
+        { "kanji": "灯火親しむべし", "kana": "とうかしたしむべし" },
+        { "kanji": "油断大敵", "kana": "ゆだんたいてき" },
+        { "kanji": "笑う門には福来る", "kana": "わらうかどにはふくきたる" },
+        { "kanji": "時は金なり", "kana": "ときはかねなり" },
+        { "kanji": "鬼に金棒", "kana": "おににかなぼう" },
+        { "kanji": "足元を見る", "kana": "あしもとをみる" },
+        { "kanji": "紙一重", "kana": "かみひとえ" },
+        { "kanji": "渡る世間に鬼はなし", "kana": "わたるせけんにおにはなし" },
+        { "kanji": "買い物上手", "kana": "かいものじょうず" },
+        { "kanji": "備えあれば憂いなし", "kana": "そなえあればうれいなし" },
+        { "kanji": "急がば回れ", "kana": "いそがばまわれ" },
+        { "kanji": "木を見て森を見ず", "kana": "きをみてもりをみず" },
+        { "kanji": "覆水盆に返らず", "kana": "ふくすいぼんにかえらず" },
+        { "kanji": "旅は道連れ世は情け", "kana": "たびはみちづれよはなさけ" },
+        { "kanji": "虎穴に入らずんば虎子を得ず", "kana": "ここつにいらずんばこじをえず" },
+        { "kanji": "蛙の子は蛙", "kana": "かえるのこはかえる" },
+        { "kanji": "柳の下にいつも泥鰌はいない", "kana": "やなぎのしたにいつもどじょうはいない" },
+        { "kanji": "嘘も方便", "kana": "うそもほうべん" },
+        { "kanji": "今日の一針明日の十針", "kana": "きょうのいちはりあすのとはり" },
+        { "kanji": "案ずるより産むが易し", "kana": "あんずるよりうむがやすし" },
+        { "kanji": "情けは人のためならず", "kana": "なさけはひとのためならず" },
+        { "kanji": "善は急げ", "kana": "ぜんはいそげ" },
+        { "kanji": "二兎を追う者は一兎をも得ず", "kana": "にとをおうものはいっとをもえず" },
+        { "kanji": "案ずるより産むが易し", "kana": "あんずるよりうむがやすし" },
+        { "kanji": "大は小を兼ねる", "kana": "だいはしょうをかねる" },
+        { "kanji": "破竹の勢い", "kana": "はちくのいきおい" },
+        { "kanji": "百発百中", "kana": "ひゃっぱつひゃくちゅう" },
+        { "kanji": "一期一会", "kana": "いちごいちえ" },
+        { "kanji": "空気を読む", "kana": "くうきをよむ" },
+        { "kanji": "雲泥の差", "kana": "うんでいのさ" },
+        { "kanji": "水に流す", "kana": "みずにながす" },
+        { "kanji": "初心貫徹", "kana": "しょしんかんてつ" },
+        { "kanji": "犬も歩けば棒に当たる", "kana": "いぬもあるけばぼうにあたる" },
+        { "kanji": "二度あることは三度ある", "kana": "にどあることはさんどある" },
+        { "kanji": "残り物には福がある", "kana": "のこりものにはふくがある" },
+        { "kanji": "目には目を歯には歯を", "kana": "めにはめをはにははを" },
+        { "kanji": "縁は異なもの味なもの", "kana": "えんはいなものあじなもの" },
+        { "kanji": "知らぬが仏", "kana": "しらぬがほとけ" },
+        { "kanji": "棚に上げる", "kana": "たなにあげる" },
+        { "kanji": "月とすっぽん", "kana": "つきとすっぽん" },
+        { "kanji": "猫に小判", "kana": "ねこにこばん" },
+        { "kanji": "豚に真珠", "kana": "ぶたにしんじゅ" },
+        { "kanji": "焼け石に水", "kana": "やけいしにみず" },
+        { "kanji": "転石苔を生せず", "kana": "てんせきこけをむさず" },
+        { "kanji": "立つ鳥跡を濁さず", "kana": "たつとりあとをにごさず" },
+        { "kanji": "口が滑る", "kana": "くちがすべる" },
+        { "kanji": "蛇の道は蛇", "kana": "じゃのみちはへび" },
+        { "kanji": "猫の手も借りたい", "kana": "ねこのてもかりたい" },
+        { "kanji": "寝耳に水", "kana": "ねみみにみず" },
+        { "kanji": "雨後の筍", "kana": "うごのたけのこ" },
+        { "kanji": "鬼の目にも涙", "kana": "おにのめにもなみだ" },
+        { "kanji": "虎の威を借る狐", "kana": "とらのいをかるきつね" },
+        { "kanji": "嘘から出た誠", "kana": "うそからでたまこと" },
+        { "kanji": "頭隠して尻隠さず", "kana": "あたまかくしてしりかくさず" },
+        { "kanji": "蛙の面に水", "kana": "かえるのつらにみず" },
+        { "kanji": "釈迦に説法", "kana": "しゃかにせっぽう" },
+        { "kanji": "飛んで火に入る夏の虫", "kana": "とんでひにいるなつのむし" },
+        { "kanji": "柳に風", "kana": "やなぎにかぜ" },
+        { "kanji": "泣きっ面に蜂", "kana": "なきっつらにはち" },
+        { "kanji": "糠に釘", "kana": "ぬかにくぎ" },
+        { "kanji": "門前の小僧習わぬ経を読む", "kana": "もんぜんのこぞうならわぬきょうをよむ" },
+        { "kanji": "犬猿の仲", "kana": "けんえんのなか" },
+        { "kanji": "身から出た錆", "kana": "みからでたさび" },
+        { "kanji": "大山鳴動して鼠一匹", "kana": "たいざんめいどうしてねずみいっぴき" },
+        { "kanji": "馬耳東風", "kana": "ばじとうふう" },
+        { "kanji": "柳の下のどじょう", "kana": "やなぎのしたのどじょう" },
+        { "kanji": "一寸先は闇", "kana": "いっすんさきはやみ" },
+        { "kanji": "泣く子と地頭には勝てぬ", "kana": "なくことじとうにはかてぬ" },
+        { "kanji": "笑止千万", "kana": "しょうしせんばん" },
+        { "kanji": "豆腐に鎹", "kana": "とうふにかすがい" },
+        { "kanji": "夜目遠目笠の内", "kana": "よめとおめかさのうち" },
+        { "kanji": "後の祭り", "kana": "あとのまつり" },
+        { "kanji": "飼い犬に手を噛まれる", "kana": "かいいぬにてをかまれる" },
+        { "kanji": "泣いて馬謖を斬る", "kana": "ないてばしょくをきる" },
+        { "kanji": "武士は食わねど高楊枝", "kana": "ぶしはくわねどたかようじ" },
+        { "kanji": "頭を冷やす", "kana": "あたまをひやす" },
+        { "kanji": "水清ければ魚棲まず", "kana": "みずきよければうおすまず" },
+        { "kanji": "腹八分目", "kana": "はらはちぶんめ" },
+        { "kanji": "月夜に釜を抜く", "kana": "つきよにかまをぬく" },
+        { "kanji": "鶴の一声", "kana": "つるのひとこえ" },
+        { "kanji": "触らぬ神に祟りなし", "kana": "さわらぬかみにたたりなし" }
+      ]
+  };
+
+  let settings = {
+    fontSize: "normal",
+    timerEnabled: false,
+    charTime: 3,
+    wordTime: 3,
+    sentenceTime: 20,
+    timerEnabled: false
+  };
+
+  let mode = "";
+  let count = 0;
+  let currentSet = [];
+  let questionIndex = 0;
+  let timer = null;
+
+  let chatSets = [
+    [
+      "今日はどんな気分？",
+      "ちょっと疲れたけど大丈夫。君は？",
+      "最近何か面白いことあった？",
+      "うん、週末に映画を観に行ったんだ。",
+      "好きな食べ物は？",
+      "やっぱりラーメンかな！",
+      "休みの日は何してるの？",
+      "本読んだり、散歩したりするかな。",
+      "旅行に行くならどこがいい？",
+      "京都とか静かなところが好き。",
+      "ありがとう！また話そうね！"
+    ],
+    [
+      "昨日は何してた？",
+      "友達とカフェに行ったよ。君は？",
+      "最近ハマってる趣味は？",
+      "ギターの練習を始めたんだ。",
+      "好きな映画ジャンルは？",
+      "アクション映画が多いかな。",
+      "週末の予定は？",
+      "家でのんびり読書してるよ。",
+      "夏休みはどこ行く？",
+      "海に行く予定だよ。楽しみ！",
+      "また次も話そうね！"
+    ],
+    [
+      "新しいゲームやった？",
+      "うん、すごく面白かったよ。君は？",
+      "最近読んだ本は？",
+      "ミステリー小説を読んだ。",
+      "どこか行きたい場所は？",
+      "北海道に行きたいな。",
+      "運動はしてる？",
+      "たまにジョギングしてるよ。",
+      "将来の夢は？",
+      "デザイナーになりたいんだ。",
+      "応援してるよ！また話そう！"
+    ],
+    [
+      "今日は学校どうだった？",
+      "まあまあかな。君は？",
+      "好きな音楽ジャンルは？",
+      "J-POPが好きだよ。",
+      "最近観た映画は？",
+      "コメディ映画だったよ。",
+      "ペットは飼ってる？",
+      "うん、猫を飼ってるんだ。",
+      "休日は何してる？",
+      "友達と遊んだりしてるよ。",
+      "また話そうね！楽しみにしてる！"
+    ],
+    [
+      "旅行で一番好きな場所は？",
+      "沖縄が一番好き！君は？",
+      "好きなスポーツは？",
+      "サッカーをよく見るよ。",
+      "よく行くカフェは？",
+      "駅前の小さいカフェだよ。",
+      "新しい趣味は？",
+      "料理を始めたんだ。",
+      "次の休みは何する？",
+      "家族と過ごす予定だよ。",
+      "また話そう！元気でね！"
+    ]
+  ];
+
+  let chatSetIndex = 0;
+  let chatRound = 0; // 0부터 9까지, 짝수는 봇, 홀수는 유저 입력 차례
+  let chatTimerValue = 30;
+  let chatTimerInterval = null;
+  let chatTimerEnabled = false;  // 타이머 기본 꺼짐 상태
+  let maxCount = 5;
+
+  const mainScreen = document.getElementById("main");
+  const practiceScreen = document.getElementById("practice");
+  const settingsScreen = document.getElementById("settings");
+  const infoScreen = document.getElementById("info");
+  const chatPracticeScreen = document.getElementById("chat-practice");
+
+  const chatInput = document.getElementById("chatInput");
+  const chatBox = document.getElementById("chatBox");
+
+  chatInput.addEventListener("focus", () => {
+    setTimeout(() => {
+      chatInput.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 300);
+  });
+
+  window.addEventListener("resize", () => {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+
+  const chatTimerDisplay = document.getElementById("chatTimer");
+
+  function hideAllScreens() {
+    clearInterval(timer);
+    clearInterval(chatTimerInterval);
+    mainScreen.classList.remove("active");
+    practiceScreen.classList.remove("active");
+    settingsScreen.classList.remove("active");
+    infoScreen.classList.remove("active");
+    chatPracticeScreen.classList.remove("active");
+    chatPracticeScreen.style.display = "none";
+  }
+
+  function startPractice(selectedMode) {
+    mode = selectedMode;
+    count = 0;
+
+    // 설정에서 문제 수 가져오기 (기존 코드)
+    let countLimit = 5; // 기본값
+    if (mode === "char") {
+      countLimit = parseInt(document.getElementById("charCount").value) || 5;
+    } else if (mode === "word") {
+      countLimit = parseInt(document.getElementById("wordCount").value) || 5;
+    } else if (mode === "sentence") {
+      countLimit = parseInt(document.getElementById("sentenceCount").value) || 3;
+    }
+
+    console.log("현재 문제 수:", countLimit); // 이 줄을 여기에 추가!
+
+    // 유효성 검사
+    if (countLimit > 50) countLimit = 50;
+    if (countLimit < 1) countLimit = 1;
+
+    maxCount = countLimit;
+
+    // 문제 셋 만들기
+    const shuffled = [...fullData[mode]].sort(() => Math.random() - 0.5);
+    currentSet = shuffled.slice(0, countLimit);
+
+    questionIndex = 0;
+
+    const modeTitle = document.getElementById("mode-title");
+    modeTitle.style.display = "block"; // 제목은 보이게
+
+    hideAllScreens();
+    practiceScreen.classList.add("active");
+    practiceScreen.classList.remove("font-small", "font-normal", "font-large");
+    practiceScreen.classList.add("font-" + settings.fontSize);
+
+    // 연습 제목 표시
+    document.getElementById("mode-title").innerText = {
+      char: "글자 연습",
+      word: "단어 연습",
+      sentence: "문장 연습"
+    }[mode];
+
+    nextQuestion(); // 첫 문제 시작
+  }
+
+  function startTimer(duration) {
+    clearInterval(timer);
+
+    if (!settings.timerEnabled) {
+      document.getElementById("progress-container").style.display = "none";
+      return;
+    }
+
+    let timeLeft = duration;
+    const progressBar = document.getElementById("progress-bar");
+    const progressContainer = document.getElementById("progress-container");
+    progressBar.style.width = "100%";
+    progressContainer.style.display = "block";
+
+    timer = setInterval(() => {
+      timeLeft -= 0.1;
+      const percent = (timeLeft / duration) * 100;
+      progressBar.style.width = percent + "%";
+
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        document.getElementById("feedback").style.color = "red";
+        document.getElementById("feedback").innerText = "시간 초과!";
+        setTimeout(() => {
+          count++;
+          questionIndex++;
+          if ((mode !== "sentence" && count >= 3) || (mode === "sentence" && count >= 2)) {
+            showAutoDismissAlert("완료! 메인 화면으로 돌아갑니다 ✨", () => {
+              endChatPractice();
+            });
+            backToMain();
+          } else {
+            nextQuestion();
+          }
+        }, 1500);
+      }
+    }, 100);
+  }
+
+  function nextQuestion() {
+    const q = currentSet[questionIndex];
+    document.getElementById("feedback").innerText = "";
+    document.getElementById("feedback").style.color = "green";
+    const answerInput = document.getElementById("answer");
+    answerInput.value = "";
+    answerInput.focus();
+
+    // 문제 표시
+    if (mode === "char") {
+      document.getElementById("question").innerText = q;
+    } else if (mode === "word") {
+      document.getElementById("question").innerHTML = `<ruby>${q.kanji}<rt>${q.kana}</rt></ruby>`;
+    } else if (mode === "sentence") {
+      document.getElementById("question").innerHTML = `
+        <div style="font-size: 14px; color: gray;">${q.kana}</div>
+        <div style="font-size: 28px;">${q.kanji}</div>
+      `;
+    }
+
+    // 타이머는 문제를 보여준 후에 조건 보고 켠다!
+    const timeLimits = {
+      char: settings.charTime,
+      word: settings.wordTime,
+      sentence: settings.sentenceTime
+    };
+
+    const progressContainer = document.getElementById("progress-container");
+
+    // ✅ 이 조건에서만 켜지도록 명확히 제어
+    if (settings.timerEnabled === true) {
+      startTimer(timeLimits[mode]);
+    } else {
+      progressContainer.style.display = "none";
+      clearInterval(timer);
+    }
+  }
+
+  // 정답 처리
+  const answerInput = document.getElementById("answer");
+  const feedback = document.getElementById("feedback");
+
+  let isComposing = false;
+
+  answerInput.addEventListener('compositionstart', () => {
+    isComposing = true;
+  });
+
+  answerInput.addEventListener('compositionend', () => {
+    isComposing = false;
+    handleNextStep();
+  });
+
+  answerInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !isComposing) {
+      e.preventDefault(); // 불필요한 제출 방지
+      handleNextStep();
+    }
+  });
+
+  // 단어/문장 연습 정답 처리 (기존 유지)
+  answerInput.addEventListener("input", () => {
+    if (mode === "word" || mode === "sentence") {
+      const user = answerInput.value.trim();
+      const q = currentSet[questionIndex];
+
+      if (user === q.kanji) {
+        clearInterval(timer);
+        count++;
+        questionIndex++;
+        if (count >= maxCount) {
+          alert("완료! 메인 화면으로 돌아갑니다 ✨");
+          backToMain();
+        } else {
+          feedback.innerText = "정답!";
+          setTimeout(nextQuestion, 1000);
+        }
+      }
+    }
+  });
+
+  function handleNextStep() {
+    if (mode === "char") {
+      const user = answerInput.value.trim();
+      const q = currentSet[questionIndex];
+
+      if (user === q) {
+        clearInterval(timer);
+        count++;
+        questionIndex++;
+        if (count >= maxCount) {
+          alert("완료! 메인 화면으로 돌아갑니다 ✨");
+          backToMain();
+        } else {
+          feedback.innerText = "정답!";
+          setTimeout(nextQuestion, 1000);
+        }
+      }
+    }
+  };
+
+  function updateChatTimerUI() {
+    const chatTimerBar = document.getElementById("chatTimerBar");
+    const chatTimerText = document.getElementById("chatTimer");
+    const toggleBtn = document.getElementById("chatTimerToggleBtn");
+
+    if (chatTimerEnabled) {
+      chatTimerBar.style.width = `${(chatTimerValue / 30) * 100}%`;
+      toggleBtn.textContent = "⏱ 타이머 끄기";
+    } else {
+      chatTimerBar.style.width = "0%";
+      chatTimerText.textContent = "⏱ 타이머 꺼짐";
+      toggleBtn.textContent = "⏱ 타이머 켜기";
+    }
+  }
+
+  // 채팅 연습 시작 함수
+  function startChatPractice() {
+    chatTimerEnabled = false;  // 시작할 때 타이머 꺼짐 상태로
+    console.log("채팅 타이머 상태:", chatTimerEnabled);  // 여기 넣기!
+
+    chatTimerValue = 30;       // 초기 타이머 값 세팅
+    updateChatTimerUI();       // UI 초기화
+
+    hideAllScreens();
+    chatPracticeScreen.style.display = "flex";
+    chatPracticeScreen.classList.add("active");
+
+    chatSetIndex = Math.floor(Math.random() * chatSets.length);
+    chatRound = 0;
+    chatBox.innerHTML = "";
+    chatInput.value = "";
+    chatInput.focus();
+
+    // 첫 질문 (봇 메시지)
+    appendChatMessage(chatSets[chatSetIndex][chatRound], "bot", false);
+
+    chatRound++; // 유저 차례로
+
+    showExpectedAnswer();
+
+    clearInterval(chatTimerInterval); // 혹시 돌고 있으면 정리
+    // 타이머는 꺼져있으니 새로 시작하지 않음
+  }
+
+  // 타이머 토글 함수
+  function toggleChatTimer() {
+    chatTimerEnabled = !chatTimerEnabled;
+    updateChatTimerUI();
+
+    clearInterval(chatTimerInterval);
+
+    if (chatTimerEnabled) {
+      chatTimerValue = 30;
+      chatTimerInterval = setInterval(() => {
+        chatTimerValue--;
+        updateChatTimerUI();
+
+        if (chatTimerValue <= 0) {
+          clearInterval(chatTimerInterval);
+          alert("시간 초과! 메인 화면으로 돌아갑니다 ✨");
+          endChatPractice();
+        }
+      }, 1000);
+    }
+  }
+
+  // 메시지 추가 함수
+  function appendChatMessage(text, sender, correct) {
+    const div = document.createElement("div");
+    div.classList.add("chat-msg");
+    if (sender === "bot") {
+      div.classList.add("bot");
+      if (correct) div.classList.add("correct");
+      div.textContent = text;
+    } else if (sender === "user") {
+      div.classList.add("user");
+      div.textContent = text;
+    } else if (sender === "expected") {
+      div.classList.add("expected");
+      div.textContent = text;
+    }
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  // 예상 답변 보여주기 함수
+  function showExpectedAnswer() {
+    const prevExpected = chatBox.querySelector(".expected");
+    if (prevExpected) chatBox.removeChild(prevExpected);
+
+    if (chatRound < chatSets[chatSetIndex].length && chatRound % 2 === 1) {
+      const expected = chatSets[chatSetIndex][chatRound];
+      appendChatMessage(expected, "expected", false);
+    }
+  }
+
+  // 유저 입력 이벤트 처리
+  chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const inputVal = chatInput.value.trim();
+      if (!inputVal) return;
+
+      if (chatRound % 2 === 1) { // 유저 차례인지 확인
+        const correctAnswer = chatSets[chatSetIndex][chatRound];
+        if (inputVal === correctAnswer) {
+          appendChatMessage(inputVal, "user", false);
+
+          if (chatRound === 9) {
+            setTimeout(() => {
+              appendChatMessage(chatSets[chatSetIndex][10], "bot", false);
+            }, 300);
+
+            chatInput.disabled = true;
+            clearInterval(chatTimerInterval);
+
+            setTimeout(() => {
+              alert("채팅 연습 완료! メイン画面に戻ります ✨");
+              endChatPractice();
+              chatInput.disabled = false;
+            }, 3000);
+          } else {
+            setTimeout(() => {
+              chatRound++;
+              appendChatMessage(chatSets[chatSetIndex][chatRound], "bot", false);
+              chatRound++;
+
+              chatTimerValue = 30;
+
+              if (chatTimerEnabled) {
+                clearInterval(chatTimerInterval);
+                chatTimerInterval = setInterval(() => {
+                  chatTimerValue--;
+                  updateChatTimerUI();
+
+                  if (chatTimerValue <= 0) {
+                    clearInterval(chatTimerInterval);
+                    alert("시간 초과! 메인 화면으로 돌아갑니다 ✨");
+                    endChatPractice();
+                  }
+                }, 1000);
+              } else {
+                updateChatTimerUI();
+              }
+
+              chatInput.value = "";
+              chatInput.focus();
+
+              showExpectedAnswer();
+            }, 300);
+          }
+        } else {
+          alert("答えが違います。もう一度入力してください。");
+          chatInput.value = "";
+        }
+      }
+    }
+  });
+
+  // 채팅 연습 종료 함수
+  function endChatPractice() {
+    clearInterval(chatTimerInterval);
+    hideAllScreens();
+    mainScreen.classList.add("active");
+  }
+
+  // 설정, 정보 화면 관련
+  function showSettings() {
+    hideAllScreens();
+    settingsScreen.classList.add("active");
+    document.getElementById("settings-tab-btn").classList.add("active-tab");
+    document.getElementById("info-tab-btn").classList.remove("active-tab");
+  }
+  function showInfo() {
+    hideAllScreens();
+    infoScreen.classList.add("active");
+    document.getElementById("info-tab-btn").classList.add("active-tab");
+    document.getElementById("settings-tab-btn").classList.remove("active-tab");
+  }
+  function backToMainFromSettings() {
+    const fs = document.querySelector('input[name="fontSize"]:checked').value;
+    settings.fontSize = fs;
+    settings.charTime = +document.getElementById("charTime").value;
+    settings.wordTime = +document.getElementById("wordTime").value;
+    settings.sentenceTime = +document.getElementById("sentenceTime").value;
+    settings.timerEnabled = document.getElementById("timerToggle").checked;
+
+    settings.charCount = +document.getElementById("charCount").value;
+    settings.wordCount = +document.getElementById("wordCount").value;
+    settings.sentenceCount = +document.getElementById("sentenceCount").value;
+
+    document.getElementById("charTimeVal").textContent = settings.charTime;
+    document.getElementById("wordTimeVal").textContent = settings.wordTime;
+    document.getElementById("sentenceTimeVal").textContent = settings.sentenceTime;
+
+    hideAllScreens();
+    mainScreen.classList.add("active");
+  }
+  function backToMainFromInfo() {
+    hideAllScreens();
+    mainScreen.classList.add("active");
+  }
+  function backToMain() {
+    const fs = document.querySelector('input[name="fontSize"]:checked').value;
+    settings.fontSize = fs;
+    settings.charTime = +document.getElementById("charTime").value;
+    settings.wordTime = +document.getElementById("wordTime").value;
+    settings.sentenceTime = +document.getElementById("sentenceTime").value;
+    settings.timerEnabled = document.getElementById("timerToggle").checked;
+
+    hideAllScreens();
+    document.getElementById("main").classList.add("active");
+
+    // 키보드 내리기 (입력 포커스 해제)
+    const focused = document.activeElement;
+    if (focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA')) {
+      focused.blur();
+    }
+  }
+
+
+  // 설정 슬라이더 이벤트 연결
+  document.getElementById("charTime").addEventListener("input", (e) => {
+    document.getElementById("charTimeVal").textContent = e.target.value;
+  });
+  document.getElementById("wordTime").addEventListener("input", (e) => {
+    document.getElementById("wordTimeVal").textContent = e.target.value;
+  });
+  document.getElementById("sentenceTime").addEventListener("input", (e) => {
+    document.getElementById("sentenceTimeVal").textContent = e.target.value;
+  });
+
+  window.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("timerToggle").addEventListener("change", (e) => {
+      settings.timerEnabled = e.target.checked;
+    });
+  });
+  function updateChatTimerDisplay() {
+    const bar = document.getElementById("chatTimerBar");
+    if (bar && typeof chatTimerValue !== 'undefined') {
+      const percent = (chatTimerValue / 30) * 100;
+      bar.style.width = `${percent}%`;
+    }
+  }
+</script>
+
+</body>
+</html>
