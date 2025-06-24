@@ -248,9 +248,9 @@
         box-sizing: border-box;
       }
       #chatBox {
-        height: 30svh;         /* 모바일에서만 줄이기 */
-        max-height: 30svh;
-        min-height: 120px;     /* 너무 작아지지 않게 */
+        height: 33vh; /* 데스크톱에서 33vh라면 모바일에선 좀 더 작게 할 수도 있지만, 일단 33vh 유지 */
+        height: calc(100% / 3); /* 높이를 부모의 1/3로 설정 */
+        min-height: 100px; /* 너무 작아지지 않게 최소 높이 설정 */
       }
     }
 
