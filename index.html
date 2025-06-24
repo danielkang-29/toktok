@@ -246,19 +246,13 @@
         max-width: 100%;
         min-height: 33%;     /* svh 또는 dvh */
         box-sizing: border-box;
+        position: fixed;  /* 화면 고정 */
+        bottom: 0; 
       }
       #chatBox {
         height: 33vh; /* 데스크톱에서 33vh라면 모바일에선 좀 더 작게 할 수도 있지만, 일단 33vh 유지 */
         height: calc(100% / 3); /* 높이를 부모의 1/3로 설정 */
         min-height: 100px; /* 너무 작아지지 않게 최소 높이 설정 */
-      }
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end; /* 화면 맨 아래 정렬 */
       }
     }
 
