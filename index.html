@@ -229,36 +229,42 @@
 
     #chatTimerArea {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 0.5rem;
-      flex-shrink: 0;
+      gap: 10px;
+      padding: 6px 12px;
+      background-color: #f0f0f0;
+      border-top: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
     }
 
     .timer-bar-wrapper {
-      width: 300px;
-      height: 10px;
-      background: #ddd;
-      border-radius: 5px;
+      flex-grow: 1;
+      background-color: #ddd;
+      height: 6px;
+      border-radius: 3px;
       overflow: hidden;
     }
 
     #chatTimerBar {
       height: 100%;
-      width: 100%;
-      background: #4caf50;
-      transition: width 1s linear;
+      width: 100%; /* 실제 너가 JS에서 조정하는 값으로 변경됨 */
+      background-color: #4caf50;
+      transition: width 0.3s ease;
     }
 
     #chatTimer {
+      white-space: nowrap;
       font-size: 14px;
       color: #333;
     }
 
     #chatTimerToggleBtn {
+      padding: 4px 10px;
       font-size: 14px;
-      padding: 6px 12px;
+      border: none;
+      cursor: pointer;
     }
+
 
     #chatBox {
       background: white;
@@ -267,12 +273,13 @@
       padding: 10px;
       font-size: 18px;
       display: flex;
-      flex-direction: column;
+      flex-direction: column;   /* 위에서 아래로 쌓임 */
       gap: 6px;
 
-      /* 💡 남는 공간을 전부 차지 */
       flex-grow: 1;
       min-height: 0;
+
+      justify-content: flex-start;  /* 기본값 */
     }
 
     #chatInput {
@@ -435,6 +442,9 @@
 
     <!-- 채팅 연습 화면 -->
     <div id="chat-practice" class="screen" style="display:none;">
+      <div id="chatBox"></div>
+      
+      <!-- 타이머 영역을 입력창 바로 위에 배치 -->
       <div id="chatTimerArea">
         <div class="timer-bar-wrapper">
           <div id="chatTimerBar"></div>
@@ -443,12 +453,56 @@
         <button id="chatTimerToggleBtn" onclick="toggleChatTimer()">⏱ 타이머 끄기</button>
       </div>
 
-      <div id="chatBox"></div>
-
       <input type="text" id="chatInput" placeholder="답장을 입력하세요..." autocomplete="off" />
     </div>
-
   </div>
+
+  <div id="completionOverlay" style="
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255, 255, 255, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    ">
+      <div style="
+        width: 150px;
+        height: 150px;
+        background-color: #4CAF50;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      ">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+          <path d="M5 13l4 4L19 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+    <div id="failureOverlay" style="
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255, 255, 255, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    ">
+      <div style="
+        width: 150px;
+        height: 150px;
+        background-color: #f44336;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      ">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+          <path d="M6 6l12 12M6 18L18 6" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
 
 <script>
   function showSettings() {
@@ -1376,13 +1430,6 @@
     practiceScreen.classList.remove("font-small", "font-normal", "font-large");
     practiceScreen.classList.add("font-" + settings.fontSize);
 
-    // 연습 제목 표시
-    document.getElementById("mode-title").innerText = {
-      char: "글자 연습",
-      word: "단어 연습",
-      sentence: "문장 연습"
-    }[mode];
-
     nextQuestion(); // 첫 문제 시작
   }
 
@@ -1413,10 +1460,7 @@
           count++;
           questionIndex++;
           if ((mode !== "sentence" && count >= 3) || (mode === "sentence" && count >= 2)) {
-            showAutoDismissAlert("완료! 메인 화면으로 돌아갑니다 ✨", () => {
-              endChatPractice();
-            });
-            backToMain();
+            showFailureOverlay(); // ✅ 실패 오버레이 표시
           } else {
             nextQuestion();
           }
@@ -1495,11 +1539,14 @@
         clearInterval(timer);
         count++;
         questionIndex++;
+
+        feedback.innerText = "정답!";
+
         if (count >= maxCount) {
-          alert("완료! 메인 화면으로 돌아갑니다 ✨");
-          backToMain();
+          setTimeout(() => {
+            showCompletionOverlay();
+          }, 500); // "정답!" 보여준 후
         } else {
-          feedback.innerText = "정답!";
           setTimeout(nextQuestion, 1000);
         }
       }
@@ -1515,16 +1562,48 @@
         clearInterval(timer);
         count++;
         questionIndex++;
+
+        feedback.innerText = "정답!";
+
         if (count >= maxCount) {
-          alert("완료! 메인 화면으로 돌아갑니다 ✨");
-          backToMain();
+          setTimeout(() => {
+            showCompletionOverlay();
+          }, 500); // 잠깐 "정답!" 보여주기
         } else {
-          feedback.innerText = "정답!";
           setTimeout(nextQuestion, 1000);
         }
       }
     }
   };
+
+  function showCompletionOverlay() {
+    if (document.activeElement && typeof document.activeElement.blur === "function") {
+      document.activeElement.blur();
+    }
+
+    const overlay = document.getElementById("completionOverlay");
+    overlay.style.display = "flex";
+
+    setTimeout(() => {
+      overlay.style.display = "none";
+      backToMain();
+    }, 2000);
+  }
+
+  function showFailureOverlay() {
+    // 키보드 자동 내리기
+    if (document.activeElement && typeof document.activeElement.blur === "function") {
+      document.activeElement.blur();
+    }
+
+    const overlay = document.getElementById("failureOverlay");
+    overlay.style.display = "flex";
+
+    setTimeout(() => {
+      overlay.style.display = "none";
+      backToMain();
+    }, 2000);
+  }
 
   function updateChatTimerUI() {
     const chatTimerBar = document.getElementById("chatTimerBar");
@@ -1607,8 +1686,8 @@
       div.classList.add("expected");
       div.textContent = text;
     }
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatBox.appendChild(div);   // 맨 아래에 추가
+    chatBox.scrollTop = chatBox.scrollHeight;  // 스크롤 맨 아래로 이동
   }
 
   // 예상 답변 보여주기 함수
