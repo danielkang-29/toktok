@@ -149,12 +149,14 @@
     }
 
     input[type="range"] {
-      -webkit-appearance: slider-vertical;
-      appearance: slider-vertical;
-      width: 8px;
-      height: 150px;
-      writing-mode: bt-lr;
-      margin: 0 auto;
+        -webkit-appearance: slider-vertical; /* 사파리, 크롬용 세로 슬라이더 */
+        appearance: slider-vertical;         /* 표준 속성 */
+        width: 8px;                          /* 슬라이더 두께 */
+        height: 150px;                       /* 슬라이더 길이 */
+        writing-mode: bt-lr;                 /* 세로 슬라이더 방향 설정 */
+        margin: 0 auto;
+        background: #ddd;
+        border-radius: 4px;
     }
 
     ruby rt {
