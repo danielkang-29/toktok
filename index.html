@@ -1355,7 +1355,29 @@
 
   answerInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !isComposing) {
+      e.preventDefault(); // 불필요한 제출 방지
       handleNextStep();
+    }
+  });
+
+  // 단어/문장 연습 정답 처리 (기존 유지)
+  answerInput.addEventListener("input", () => {
+    if (mode === "word" || mode === "sentence") {
+      const user = answerInput.value.trim();
+      const q = currentSet[questionIndex];
+
+      if (user === q.kanji) {
+        clearInterval(timer);
+        count++;
+        questionIndex++;
+        if ((mode !== "sentence" && count >= 3) || (mode === "sentence" && count >= 2)) {
+          alert("완료! 메인 화면으로 돌아갑니다 ✨");
+          backToMain();
+        } else {
+          feedback.innerText = "정답!";
+          setTimeout(nextQuestion, 1000);
+        }
+      }
     }
   });
 
@@ -1378,26 +1400,6 @@
       }
     }
   };
-
-  answerInput.addEventListener("input", () => {
-    if (mode === "word" || mode === "sentence") {
-      const user = answerInput.value.trim();
-      const q = currentSet[questionIndex];
-
-      if (user === q.kanji) {
-        clearInterval(timer);
-        count++;
-        questionIndex++;
-        if ((mode !== "sentence" && count >= 3) || (mode === "sentence" && count >= 2)) {
-          alert("완료! 메인 화면으로 돌아갑니다 ✨");
-          backToMain();
-        } else {
-          feedback.innerText = "정답!";
-          setTimeout(nextQuestion, 1000);
-        }
-      }
-    }
-  });
 
   function updateChatTimerUI() {
     const chatTimerBar = document.getElementById("chatTimerBar");
