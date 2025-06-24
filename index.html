@@ -1253,7 +1253,7 @@
     practiceScreen.classList.add("font-" + settings.fontSize);
 
     document.getElementById("mode-title").innerText = {
-      char: "자리 연습",
+      char: "글자 연습",
       word: "단어 연습",
       sentence: "문장 연습"
     }[mode];
@@ -1342,9 +1342,25 @@
   const answerInput = document.getElementById("answer");
   const feedback = document.getElementById("feedback");
 
-  answerInput.addEventListener("keydown", (e) => {
-    if (mode === "char" && e.key === "Enter") {
-      e.preventDefault();
+  let isComposing = false;
+
+  answerInput.addEventListener('compositionstart', () => {
+    isComposing = true;
+  });
+
+  answerInput.addEventListener('compositionend', () => {
+    isComposing = false;
+    handleNextStep();
+  });
+
+  answerInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !isComposing) {
+      handleNextStep();
+    }
+  });
+
+  function handleNextStep() {
+    if (mode === "char") {
       const user = answerInput.value.trim();
       const q = currentSet[questionIndex];
 
@@ -1361,7 +1377,7 @@
         }
       }
     }
-  });
+  };
 
   answerInput.addEventListener("input", () => {
     if (mode === "word" || mode === "sentence") {
@@ -1401,6 +1417,8 @@
   // 채팅 연습 시작 함수
   function startChatPractice() {
     chatTimerEnabled = false;  // 시작할 때 타이머 꺼짐 상태로
+    console.log("채팅 타이머 상태:", chatTimerEnabled);  // 여기 넣기!
+
     chatTimerValue = 30;       // 초기 타이머 값 세팅
     updateChatTimerUI();       // UI 초기화
 
