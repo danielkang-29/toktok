@@ -244,7 +244,8 @@
     @media (max-width: 768px) {
       #chat-practice {
         max-width: 100%;
-        min-height: 33svh;     /* svh 또는 dvh */
+        height: 33vh;       /* 화면 높이의 1/3 */
+        min-height: 150px;  /* 너무 작아지지 않게 최소 높이 설정 */
         box-sizing: border-box;
         bottom: 0;
       }
@@ -418,7 +419,7 @@
 
       <!-- 글자 수 설정 -->
       <div id="problem-count-settings" style="display: flex; flex-direction: column; gap: 12px; max-width: 300px; margin: 0 auto;">
-        <h3>문제 수 (1~50)</h3>
+        <h3>문제 수</h3>
         <div>
           <label for="charCount">글자</label>
           <input type="number" id="charCount" min="1" max="50" value="5" />
@@ -1508,11 +1509,13 @@
     }
 
     const q = currentSet[questionIndex];
-    document.getElementById("feedback").innerText = "";
-    document.getElementById("feedback").style.color = "green";
     const answerInput = document.getElementById("answer");
-    answerInput.value = "";
+
+    answerInput.value = "";           // ✅ 반드시 비워주기
     answerInput.focus();
+
+    feedback.innerText = "";
+    feedback.style.color = "green";
 
     // 문제 표시
     if (mode === "char") {
@@ -1526,7 +1529,7 @@
       `;
     }
 
-    // 타이머는 문제를 보여준 후에 조건 보고 켠다!
+    // 타이머
     const timeLimits = {
       char: settings.charTime,
       word: settings.wordTime,
@@ -1535,7 +1538,6 @@
 
     const progressContainer = document.getElementById("progress-container");
 
-    // ✅ 이 조건에서만 켜지도록 명확히 제어
     if (settings.timerEnabled === true) {
       startTimer(timeLimits[mode]);
     } else {
@@ -1560,120 +1562,80 @@
   });
 
   answerInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !isComposing) {
-      e.preventDefault(); // 불필요한 제출 방지
-      handleNextStep();
-    }
-  });
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (isComposing || isAnswering) return;
 
-  // 단어/문장 연습 정답 처리 (수정)
-  answerInput.addEventListener("input", () => {
-    if (isAnswering) return;  // 이미 처리 중이면 무시
-
-    if (mode === "word" || mode === "sentence") {
-      const user = answerInput.value.trim();
-      const q = currentSet[questionIndex];
-
-      if (user === q.kanji) {
-        isAnswering = true;
-        clearInterval(timer);
-        count++;
-        questionIndex++;
-
-        feedback.innerText = "정답!";
-
-        if (count >= maxCount) {
-          setTimeout(() => {
-            showCompletionOverlay();
-            isAnswering = false;
-          }, 500);
-        } else {
-          setTimeout(() => {
-            nextQuestion();
-            isAnswering = false;
-          }, 1000);
-        }
-      } else if (user.length === q.kanji.length) {
-        isAnswering = true;
-        clearInterval(timer);
-        wrongCount++;
-        questionIndex++;
-
-        feedback.style.color = "red";
-        feedback.innerText = "오답!";
-
-        if (wrongCount >= 3) {
-          setTimeout(() => {
-            showFailureOverlay();
-            isAnswering = false;
-          }, 500);
-        } else {
-          setTimeout(() => {
-            nextQuestion();
-            isAnswering = false;
-          }, 1000);
-        }
+      // 단어/문장 모드: 길이로 판단하지 않고 엔터로만 확정
+      if (mode === 'word' || mode === 'sentence' || mode === 'char') {
+        handleNextStep();
       }
     }
   });
-
 
   function handleNextStep() {
     if (isAnswering) return;  // 이미 처리 중이면 무시
     isAnswering = true;
 
-    if (mode === "char") {
-      const user = answerInput.value.trim();
-      const q = currentSet[questionIndex];
+    const user = answerInput.value.trim();
+    const q = currentSet[questionIndex];
 
-      if (!q) {
-        console.warn("문제가 없거나 questionIndex가 범위를 벗어났어요.", currentSet, questionIndex);
-        isAnswering = false;
-        return;
-      }
-
-      if (user === q) {
-        clearInterval(timer);
-        count++;
-        questionIndex++;
-
-        feedback.innerText = "정답!";
-
-        if (count >= maxCount) {
-          setTimeout(() => {
-            showCompletionOverlay();
-            isAnswering = false;
-          }, 500);
-        } else {
-          setTimeout(() => {
-            nextQuestion();
-            isAnswering = false;
-          }, 1000);
-        }
-      } else if (user.length === q.length) {
-        clearInterval(timer);
-        wrongCount++;
-        questionIndex++;
-
-        feedback.style.color = "red";
-        feedback.innerText = "오답!";
-
-        if (wrongCount >= 3) {
-          setTimeout(() => {
-            showFailureOverlay();
-            isAnswering = false;
-          }, 500);
-        } else {
-          setTimeout(() => {
-            nextQuestion();
-            isAnswering = false;
-          }, 1000);
-        }
-      } else {
-        isAnswering = false;
-      }
+    if (!q) {
+      console.warn("문제가 없거나 questionIndex가 범위를 벗어났어요.", currentSet, questionIndex);
+      isAnswering = false;
+      return;
     }
-  };
+
+    let correctAnswer = "";
+
+    if (mode === "char") {
+      correctAnswer = q;
+    } else if (mode === "word" || mode === "sentence") {
+      correctAnswer = q.kanji;
+    }
+
+    if (user === correctAnswer) {
+      clearInterval(timer);
+      count++;
+      questionIndex++;
+
+      feedback.style.color = "green";
+      feedback.innerText = "정답!";
+
+      if (count >= maxCount) {
+        setTimeout(() => {
+          showCompletionOverlay();
+          isAnswering = false;
+        }, 500);
+      } else {
+        setTimeout(() => {
+          nextQuestion();
+          isAnswering = false;
+        }, 1000);
+      }
+    } else if (user.length === correctAnswer.length) {
+      clearInterval(timer);
+      wrongCount++;
+      questionIndex++;
+
+      feedback.style.color = "red";
+      feedback.innerText = "오답!";
+
+      if (wrongCount >= 3) {
+        setTimeout(() => {
+          showFailureOverlay();
+          isAnswering = false;
+        }, 500);
+      } else {
+        setTimeout(() => {
+          nextQuestion();
+          isAnswering = false;
+        }, 1000);
+      }
+    } else {
+      isAnswering = false; // 아직 정답/오답 판단할 수 없음
+    }
+  }
 
   function showCompletionOverlay() {
     if (document.activeElement && typeof document.activeElement.blur === "function") {
@@ -2018,6 +1980,29 @@ function startSmoothChatTimer(duration) {
     }, 100);
   }
 </script>
+<script>
+  const fontSizeRadios = document.querySelectorAll('input[name="fontSize"]');
+  const questionEl = document.getElementById("question"); // 질문 표시되는 요소
 
+  fontSizeRadios.forEach(radio => {
+    radio.addEventListener("change", () => {
+      if (radio.checked) {
+        if (radio.value === "small") {
+          questionEl.style.fontSize = "14px";
+        } else if (radio.value === "normal") {
+          questionEl.style.fontSize = "20px";
+        } else if (radio.value === "large") {
+          questionEl.style.fontSize = "28px";
+        }
+      }
+    });
+  });
+
+  // 페이지 열릴 때 기본 선택된 라디오에 맞게 초기 폰트 크기 적용
+  window.addEventListener("DOMContentLoaded", () => {
+    const checked = document.querySelector('input[name="fontSize"]:checked');
+    if (checked) checked.dispatchEvent(new Event("change"));
+  });
+</script> 
 </body>
 </html>
