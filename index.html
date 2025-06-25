@@ -272,7 +272,7 @@
       height: 100%;
       width: 100%; /* 실제 너가 JS에서 조정하는 값으로 변경됨 */
       background-color: #4caf50;
-      transition: width 0.3s ease;
+      transition: width 1s linear;
     }
 
     #chatTimer {
@@ -338,14 +338,14 @@
       background: #f0f0f0;
       color: gray;
       align-self: flex-end;
-      text-align: right;
+      text-align: left;
       display: block;
     }
     .chat-msg.expected {
       background: #e0e0e0;
       color: #666666;
       align-self: flex-end;
-      text-align: right;
+      text-align: left;
       font-style: italic;
       border: 1px dashed #999999;
       user-select: none;
@@ -1975,6 +1975,47 @@
       const percent = (chatTimerValue / 30) * 100;
       bar.style.width = `${percent}%`;
     }
+  }
+
+function startSmoothChatTimer(duration) {
+  const timerBar = document.getElementById("chatTimerBar");
+  const timerText = document.getElementById("chatTimer");
+
+  let remaining = duration;
+  const total = duration;
+
+  clearInterval(timer);
+  timer = setInterval(() => {
+    remaining -= 0.1;
+    if (remaining <= 0) {
+      clearInterval(timer);
+      remaining = 0;
+    }
+
+    const percent = (remaining / total) * 100;
+      timerBar.style.width = `${percent}%`;
+      timerText.textContent = `${Math.ceil(remaining)}초`;
+    }, 100);
+  }
+  function startSmoothChatTimer(duration) {
+    const timerBar = document.getElementById("chatTimerBar");
+    const timerText = document.getElementById("chatTimer");
+
+    let remaining = duration;
+    const total = duration;
+
+    clearInterval(timer);
+    timer = setInterval(() => {
+      remaining -= 0.1;
+      if (remaining <= 0) {
+        clearInterval(timer);
+        remaining = 0;
+      }
+
+      const percent = (remaining / total) * 100;
+      timerBar.style.width = `${percent}%`;
+      timerText.textContent = `${Math.ceil(remaining)}초`;
+    }, 100);
   }
 </script>
 
