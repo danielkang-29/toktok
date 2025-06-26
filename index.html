@@ -64,6 +64,10 @@
       }
     }
 
+    #main:active, button:active {
+      background-color: white; /* 눌렸을 때만 색 변경, 바로 돌아오게 */
+    }
+
     @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
     #app-title {
@@ -110,6 +114,7 @@
       color: white;
       cursor: pointer;
       transition: background-color 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* 그림자 추가 */
     }
 
     /* 글자 연습 - 빨강+분홍 사이 */
@@ -170,7 +175,7 @@
       max-width: 280px;
       margin: 10px auto 0 auto;
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
       gap: 10px;
       box-sizing: border-box;
     }
@@ -187,6 +192,7 @@
       transition: background-color 0.3s;
       border: none;
       border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* 그림자 추가 */
     }
 
     #timer-settings {
@@ -242,6 +248,187 @@
     }
     #settings label {
       cursor: pointer;
+    }
+    #settings {
+      max-width: 360px;
+      margin: 20px auto;
+      padding: 20px 24px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+    }
+    #settings .section {
+      border-bottom: 2px solid #4257B2;
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+    }
+
+    #settings .section.no-underline {
+      border-bottom: none;
+    }
+
+    /* h3 밑줄 제거 */
+    #settings h3 {
+      border-bottom: none;
+      margin-bottom: 12px;
+      color: #4257B2;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+
+    /* 글자 크기 라디오 버튼 기본 스타일 - 체크박스처럼 보이게 */
+    #settings input[type="radio"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2.5px solid #4257B2;
+      border-radius: 4px;
+      background-color: white;
+      cursor: pointer;
+      margin-right: 10px;
+      vertical-align: middle;
+      position: relative;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    input[name="fontSize"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border: none;
+      background-color: #4257B2;
+      border-radius: 8px;
+      cursor: pointer;
+      position: relative;
+      vertical-align: middle;
+      margin-right: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    #problem-count-settings {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 300px;
+      margin: 0 auto 24px auto;
+      align-items: center;
+    }
+
+    #problem-count-settings > div {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 8px; /* label과 input 사이 간격 */
+    }
+
+    #problem-count-settings label {
+      flex: 0 0 auto;  /* 자동 크기 */
+      font-weight: 500;
+      margin-right: 18px; /* 간격 조절 */
+    }
+
+    #problem-count-settings input[type="number"] {
+      width: 38px;     /* 높이와 비슷한 너비 (원래 높이 추정값) */
+      height: 38px;    /* 높이를 원래대로 유지 */
+      padding: 6px 10px;
+      font-size: 1rem;
+      text-align: center;
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+    #problem-count-settings input[type="number"]:focus {
+      outline: none;
+      border-color: #4257B2;
+      box-shadow: 0 0 5px rgba(66,87,178,0.5);
+    }
+    /* 크롬, 사파리, 엣지용 */
+    #problem-count-settings input[type="number"]::-webkit-inner-spin-button, 
+    #problem-count-settings input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    #timer-settings .slider-group {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+    }
+
+    #timer-settings label {
+      flex: 1;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+
+    #timer-settings input[type="range"] {
+      flex: 1.2;
+
+      height: 6px;
+      border-radius: 6px;
+      background: #ddd;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #timer-settings input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #4257B2;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 4px rgba(66,87,178,0.7);
+      transition: background-color 0.3s ease;
+    }
+
+    #timer-settings input[type="range"]:focus::-webkit-slider-thumb {
+      background-color: #2e3f8f;
+    }
+    
+    /* 공통 버튼 스타일 (라디오, 체크박스) */
+    #settings input[type="radio"],
+    #settings input[type="checkbox"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #4257B2;
+      border-radius: 4px;
+      background-color: white;
+      cursor: pointer;
+      margin-right: 8px;
+      vertical-align: middle;
+      position: relative;
+      transition: none; /* 즉각 반응 */
+    }
+
+    /* 타이머 체크박스 */
+    #timerToggle {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border: 2px solid #4257B2;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+      background-color: white;
+      transition: none; /* 즉각 반응 */
+    }
+
+    /* 선택된 상태에서 배경색만 파란색으로 변경 (체크 표시 없이) */
+    #settings input[type="radio"]:checked,
+    #settings input[type="checkbox"]:checked,
+    #timerToggle:checked {
+      background-color: #4257B2;
+      border-color: #4257B2;
     }
     .slider-group {
       margin: 20px 0;
@@ -466,35 +653,35 @@
     <!-- 설정 화면 -->
     <div id="settings" class="screen">
 
-      <div>
+      <!-- 글자 크기 섹션 -->
+      <div class="section">
         <h3>글자 크기</h3>
         <label><input type="radio" name="fontSize" value="small"> 작게</label>
         <label><input type="radio" name="fontSize" value="normal" checked> 보통</label>
         <label><input type="radio" name="fontSize" value="large"> 크게</label>
       </div>
 
-      
-
-      <!-- 글자 수 설정 -->
-      <div id="problem-count-settings" style="display: flex; flex-direction: column; gap: 12px; max-width: 300px; margin: 0 auto;">
+      <!-- 문제 수 섹션 (문제 수만 감싸는 별도 div) -->
+      <div class="section">
         <h3>문제 수</h3>
-        <div>
-          <label for="charCount">글자</label>
-          <input type="number" id="charCount" min="1" max="50" value="5" />
-        </div>
-        <div>
-          <label for="wordCount">단어</label>
-          <input type="number" id="wordCount" min="1" max="50" value="5" />
-        </div>
-        <div>
-          <label for="sentenceCount">문장</label>
-          <input type="number" id="sentenceCount" min="1" max="50" value="3" />
+        <div id="problem-count-settings" style="display: flex; flex-direction: column; gap: 12px; max-width: 300px; margin: 0 auto;">
+          <div>
+            <label for="charCount">글자</label>
+            <input type="number" id="charCount" min="1" max="50" value="5" />
+          </div>
+          <div>
+            <label for="wordCount">단어</label>
+            <input type="number" id="wordCount" min="1" max="50" value="5" />
+          </div>
+          <div>
+            <label for="sentenceCount">문장</label>
+            <input type="number" id="sentenceCount" min="1" max="50" value="3" />
+          </div>
         </div>
       </div>
 
-      <!-- 나머지 설정들 (폰트 크기, 타이머 등) -->
-
-      <div>
+      <!-- 타이머 조정 섹션 -->
+      <div class="section no-underline">
         <h3>타이머 조정</h3>
         <label><input type="checkbox" id="timerToggle"> 타이머 켜기</label>
 
@@ -515,6 +702,7 @@
           </div>
         </div>
       </div>
+
     </div>
 
     <!-- 정보 화면 -->
