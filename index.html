@@ -79,6 +79,49 @@
       margin-top: 40px; 
     }
 
+    #practice-buttons button {
+      margin: 0;
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    /* 글자 연습 - 빨강+분홍 사이 */
+    .btn-char {
+      background-color: #e64980; /* 기본색 */
+    }
+    .btn-char:hover {
+      background-color: #d6336c; /* 더 진한 핑크레드 */
+    }
+
+    /* 단어 연습 - 파란색 */
+    .btn-word {
+      background-color: #339af0;
+    }
+    .btn-word:hover {
+      background-color: #1c7ed6; /* 진한 블루 */
+    }
+
+    /* 문장 연습 - 보라색 */
+    .btn-sentence {
+      background-color: #9b59b6;
+    }
+    .btn-sentence:hover {
+      background-color: #884ea0; /* 더 깊은 보라 */
+    }
+
+    /* 채팅 연습 - 초록색 */
+    .btn-chat {
+      background-color: #2ecc71;
+    }
+    .btn-chat:hover {
+      background-color: #27ae60; /* 더 진한 그린 */
+    }
+
     .window-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -100,11 +143,6 @@
       transition: background-color 0.3s ease;
     }
 
-    .window-grid button:hover {
-      background-color: #007bff;
-      color: white;
-    }
-
     #settings-info-tabs {
       width: 100%;
       max-width: 280px;
@@ -122,8 +160,10 @@
       padding: 10px 0;
       cursor: pointer;
       box-sizing: border-box;
-      background-color: #f0f0f0;
+      color: white;
+      background-color: #ffe8a1;
       transition: background-color 0.3s;
+      border: none;
       border-radius: 5px;
     }
 
@@ -373,12 +413,12 @@
     <div id="main" class="screen active">
       <h1>톡톡 일본어</h1>
 
-       <div class="main-buttons">
+      <div class="main-buttons">
         <div id="practice-buttons" class="window-grid">
-          <button onclick="startPractice('char')">글자 연습</button>
-          <button onclick="startPractice('word')">단어 연습</button>
-          <button onclick="startPractice('sentence')">문장 연습</button>
-          <button onclick="startChatPractice()">채팅 연습</button>
+          <button class="btn-char" onclick="startPractice('char')">글자 연습</button>
+          <button class="btn-word" onclick="startPractice('word')">단어 연습</button>
+          <button class="btn-sentence" onclick="startPractice('sentence')">문장 연습</button>
+          <button class="btn-chat" onclick="startChatPractice()">채팅 연습</button>
         </div>
       </div>
 
