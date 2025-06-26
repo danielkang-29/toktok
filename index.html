@@ -325,7 +325,7 @@
 
 
     #chatBox {
-      background: white;
+      background: #96B2FF;
       border: 1px solid #ccc;
       overflow-y: auto;
       padding: 10px;
@@ -333,6 +333,7 @@
       display: flex;
       flex-direction: column;   /* 위에서 아래로 쌓임 */
       gap: 6px;
+      border-radius: 5px;
 
       flex-grow: 1;
       height: 33vh;
@@ -360,29 +361,30 @@
       line-height: 1.3;
     }
     .chat-msg.bot {
-      background: white;
-      color: black;
+     background: #06C755;
+      color: #111111;
       align-self: flex-start;
       text-align: left;
+      display: block;
     }
     .chat-msg.bot.correct {
       background: #d0f0d0;
       color: black;
     }
     .chat-msg.user {
-      background: #f0f0f0;
-      color: gray;
+      background: #06C755;
+      color: #111111;
       align-self: flex-end;
       text-align: left;
       display: block;
     }
     .chat-msg.expected {
-      background: #e0e0e0;
+      background: #06C755;
       color: #666666;
       align-self: flex-end;
       text-align: left;
       font-style: italic;
-      border: 1px dashed #999999;
+      border: none;
       user-select: none;
       pointer-events: none;
     }
