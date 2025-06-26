@@ -48,15 +48,20 @@
       border: none;
       font-size: 16px;
       color: white;
-      padding-top: env(safe-area-inset-top);
       cursor: pointer;
       padding: 5px 10px;
       outline: none;
       transition: color 0.3s ease;
-      touch-action: manipulation;
     }
     #top-bar button:hover {
       color: #C6C6C8;
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      button:hover {
+        background-color: transparent; /* 또는 원래색 */
+        /* box-shadow, border 등도 없애고 싶으면 여기에 */
+      }
     }
 
     @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
