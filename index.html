@@ -21,6 +21,7 @@
     }
 
     body {
+      background-color: #f0f1f3;
       font-family: sans-serif;
       text-align: center;
       margin: 0;
@@ -68,9 +69,6 @@
     #main:active, button:active {
       background-color: white; /* 눌렸을 때만 색 변경, 바로 돌아오게 */
     }
-    #main:active, button:active {
-      background-color: white; /* 눌렸을 때만 색 변경, 바로 돌아오게 */
-    }
 
     @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
@@ -106,53 +104,67 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 40px; 
+      margin-top: 40px;
     }
 
-    #practice-buttons button {
+    /* 버튼 공통 스타일 */
+    #practice-buttons button,
+    .window-grid button {
       margin: 0;
       padding: 12px 20px;
       font-size: 16px;
-      border: none;
+      border: 3px solid transparent;
       border-radius: 8px;
-      color: white;
+      background-color: white;
+      color: inherit;
       cursor: pointer;
-      transition: background-color 0.2s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* 그림자 추가 */
+      font-weight: bold;
+      box-sizing: border-box;
+      transition: border-color 0.2s ease, color 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    /* 글자 연습 - 빨강+분홍 사이 */
+    /* 글자 연습 - 빨강+분홍 */
     .btn-char {
-      background-color: #e64980; /* 기본색 */
+      border-color: #e64980;
+      color: #e64980 !important;
     }
     .btn-char:hover {
-      background-color: #d6336c; /* 더 진한 핑크레드 */
+      border-color: #d6336c !important;
+      color: #d6336c !important;
     }
 
     /* 단어 연습 - 파란색 */
     .btn-word {
-      background-color: #339af0;
+      border-color: #339af0;
+      color: #339af0 !important;
     }
     .btn-word:hover {
-      background-color: #1c7ed6; /* 진한 블루 */
+      border-color: #1c7ed6 !important;
+      color: #1c7ed6 !important;
     }
 
     /* 문장 연습 - 보라색 */
     .btn-sentence {
-      background-color: #9b59b6;
+      border-color: #9b59b6;
+      color: #9b59b6 !important;
     }
     .btn-sentence:hover {
-      background-color: #884ea0; /* 더 깊은 보라 */
+      border-color: #884ea0 !important;
+      color: #884ea0 !important;
     }
 
     /* 채팅 연습 - 초록색 */
     .btn-chat {
-      background-color: #2ecc71;
+      border-color: #2ecc71;
+      color: #2ecc71 !important;
     }
     .btn-chat:hover {
-      background-color: #27ae60; /* 더 진한 그린 */
+      border-color: #27ae60 !important;
+      color: #27ae60 !important;
     }
 
+    /* 그리드 배치 */
     .window-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -168,10 +180,6 @@
       width: 100%;
       height: 120px;
       font-size: 18px;
-      border-radius: 5px;
-      cursor: pointer;
-      box-sizing: border-box;
-      transition: background-color 0.3s ease;
     }
 
     #settings-info-tabs {
@@ -191,12 +199,12 @@
       padding: 10px 0;
       cursor: pointer;
       box-sizing: border-box;
-      color: white;
-      background-color: #ffe8a1;
+      color: #ffe8a1;
+      background-color: white;
       transition: background-color 0.3s;
       border: none;
       border-radius: 5px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* 그림자 추가 */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     #timer-settings {
@@ -716,7 +724,7 @@
         개발자 강민서<br />
         감수자 막둥이<br />
         검수자 홍모씨<br />
-        어시스턴트 황금순
+        어시스턴트 황
       </div>
     </div>
 
@@ -2056,7 +2064,7 @@
             clearInterval(chatTimerInterval);
 
             setTimeout(() => {
-              alert("채팅 연습 완료! メイン画面に戻ります ✨");
+              alert("채팅 연습 완료! 메인 화면으로 이동합니다");
               endChatPractice();
               chatInput.disabled = false;
             }, 3000);
