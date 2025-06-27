@@ -182,6 +182,21 @@
       font-size: 18px;
     }
 
+    #answer {
+      width: 80%;
+      max-width: 400px;
+      font-size: 28px;        /* 문제 글자 크기랑 맞추기 */
+      height: 40px;           /* 적당한 높이 */
+      padding: 0 10px;
+      box-sizing: border-box;
+      text-align: center;     /* 가로 가운데 정렬 */
+      line-height: 40px;      /* 세로 가운데 정렬 */
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
     #settings-info-tabs {
       width: 100%;
       max-width: 280px;
@@ -463,6 +478,46 @@
       font-size: 16px;
       margin-top: 5px;
     }
+    #info {
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+
+      width: calc(100vw - 40px); /* 화면 가로에서 좌우 20px씩 여백 */
+      max-width: 393px;           /* 아이폰15 가로 최대 너비 */
+      margin: 20px auto;          /* 위아래 20px, 좌우 자동 중앙 정렬 */
+      box-sizing: border-box;
+    }
+    #info h2 {
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: #4257B2;
+      margin-bottom: 16px;
+      border-bottom: 2px solid #4257B2;
+      padding-bottom: 6px;
+    }
+    #info ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #info ul li {
+      display: flex;
+      justify-content: center; /* 가로 중앙 정렬 */
+      gap: 20px;               /* 직책과 이름 사이 간격 */
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+      font-size: 1.1rem;
+      text-align: center;      /* 텍스트 가운데 정렬 */
+    }
+
+    #info ul li strong,
+    #info ul li span {
+      flex: 1;                 /* 균등 분배 */
+    }
     #info-text {
       margin-top: 20px;
       font-size: 18px;
@@ -718,14 +773,22 @@
     </div>
 
     <!-- 정보 화면 -->
-    <div id="info" class="screen" style="padding: 20px;">
-      <h2>정보</h2>
-      <div id="info-text">
-        개발자 강민서<br />
-        감수자 막둥이<br />
-        검수자 홍모씨<br />
-        어시스턴트 황
-      </div>
+    <div id="info" class="screen" style="padding:20px; background:#f8f9fa; border-radius:12px; box-shadow:0 6px 12px rgba(0,0,0,0.1); font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:#333;">
+      <h2 style="font-weight:700; font-size:1.6rem; color:#4257B2; margin-bottom:16px; border-bottom:2px solid #4257B2; padding-bottom:6px;">정보</h2>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #ddd; font-size:1.1rem;">
+          <strong style="color:#4257B2;">개발자</strong><span>강민서</span>
+        </li>
+        <li style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #ddd; font-size:1.1rem;">
+          <strong style="color:#4257B2;">감수자</strong><span>막둥이</span>
+        </li>
+        <li style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #ddd; font-size:1.1rem;">
+          <strong style="color:#4257B2;">검수자</strong><span>홍모씨</span>
+        </li>
+        <li style="display:flex; justify-content:space-between; padding:10px 0; font-size:1.1rem;">
+          <strong style="color:#4257B2;">서포터</strong><span>황금순</span>
+        </li>
+      </ul>
     </div>
 
     <!-- 채팅 연습 화면 -->
@@ -1932,10 +1995,10 @@
 
     if (chatTimerEnabled) {
       chatTimerBar.style.width = `${(chatTimerValue / 30) * 100}%`;
-      toggleBtn.textContent = "⏱ 타이머 끄기";
+      toggleBtn.textContent = "⏱ 켜짐";
     } else {
       chatTimerBar.style.width = "0%";
-      toggleBtn.textContent = "⏱ 타이머 켜기";
+      toggleBtn.textContent = "⏱ 꺼짐";
     }
   }
 
