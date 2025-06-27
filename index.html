@@ -57,13 +57,17 @@
       color: #C6C6C8;
     }
 
+    /* 모바일(터치) 환경에서는 hover 무효화 */
     @media (hover: none) and (pointer: coarse) {
-      button:hover {
-        background-color: white; /* 또는 원래색 */
-        /* box-shadow, border 등도 없애고 싶으면 여기에 */
+      #top-bar button:hover {
+        color: white !important;  /* 기본 색상으로 덮어쓰기 */
+        background-color: transparent !important;
       }
     }
 
+    #main:active, button:active {
+      background-color: white; /* 눌렸을 때만 색 변경, 바로 돌아오게 */
+    }
     #main:active, button:active {
       background-color: white; /* 눌렸을 때만 색 변경, 바로 돌아오게 */
     }
