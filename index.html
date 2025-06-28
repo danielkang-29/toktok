@@ -66,6 +66,12 @@
       }
     }
 
+    @media (hover: none) {
+      .hover-effect-class:hover {
+        background-color: initial !important; /* 혹은 원래 상태로 복구할 스타일 */
+      }
+    }
+
     #main:active, button:active {
       background-color: white; /* 눌렸을 때만 색 변경, 바로 돌아오게 */
     }
@@ -288,7 +294,7 @@
     }
     #settings .section {
       border-bottom: 2px solid #4257B2;
-      padding-bottom: 12px;
+      padding-bottom: 28px; /* 기존보다 4px 더 아래로 밀림 */
       margin-bottom: 24px;
     }
 
@@ -670,6 +676,10 @@
       padding: 8px;
       box-sizing: border-box;
       vertical-align: middle;
+      line-height: 1.2;           /* 또는 24px 등 높이에 맞게 */
+      height: 40px;               /* 적당한 높이 지정 */
+      -webkit-appearance: none;   /* iOS 기본 스타일 초기화 */
+      appearance: none;
     }
     #chatBackBtn {
       margin-top: 10px;
@@ -773,22 +783,24 @@
     </div>
 
     <!-- 정보 화면 -->
-    <div id="info" class="screen" style="padding:20px; background:#f8f9fa; border-radius:12px; box-shadow:0 6px 12px rgba(0,0,0,0.1); font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:#333;">
-      <h2 style="font-weight:700; font-size:1.6rem; color:#4257B2; margin-bottom:16px; border-bottom:2px solid #4257B2; padding-bottom:6px;">정보</h2>
-      <ul style="list-style:none; padding:0; margin:0;">
-        <li style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #ddd; font-size:1.1rem;">
-          <strong style="color:#4257B2;">개발자</strong><span>강민서</span>
-        </li>
-        <li style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #ddd; font-size:1.1rem;">
-          <strong style="color:#4257B2;">감수자</strong><span>막둥이</span>
-        </li>
-        <li style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #ddd; font-size:1.1rem;">
-          <strong style="color:#4257B2;">검수자</strong><span>홍모씨</span>
-        </li>
-        <li style="display:flex; justify-content:space-between; padding:10px 0; font-size:1.1rem;">
-          <strong style="color:#4257B2;">서포터</strong><span>황금순</span>
-        </li>
-      </ul>
+    <div id="info-screen" style="display: block;" onclick="backToMain()">
+      <div id="info" class="screen" style="padding:20px; background:#f8f9fa; border-radius:12px; box-shadow:0 6px 12px rgba(0,0,0,0.1); font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:#333; min-height: 100vh;">
+        <h2 style="font-weight:700; font-size:1.6rem; color:#4257B2; margin-top: 100px; margin-bottom:6px; border-bottom:2px solid #4257B2; padding-bottom:16px;">정보</h2>
+        <ul style="list-style:none; padding:0; margin:0;">
+          <li style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #ddd; font-size:1.1rem;">
+            <strong style="color:#4257B2;">개발자</strong><span>강민서</span>
+          </li>
+          <li style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #ddd; font-size:1.1rem;">
+            <strong style="color:#4257B2;">감수자</strong><span>막둥이</span>
+          </li>
+          <li style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #ddd; font-size:1.1rem;">
+            <strong style="color:#4257B2;">검수자</strong><span>홍모씨</span>
+          </li>
+          <li style="display:flex; justify-content:space-between; padding:10px 0; font-size:1.1rem;">
+            <strong style="color:#4257B2;">서포터</strong><span>황금순</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <!-- 채팅 연습 화면 -->
@@ -1786,6 +1798,8 @@
     nextQuestion(); // 첫 문제 시작
   }
 
+  let isTimerRunning = false;
+
   function startTimer(duration) {
     clearInterval(timer);
 
@@ -1797,6 +1811,7 @@
     let timeLeft = duration;
     const progressBar = document.getElementById("progress-bar");
     const progressContainer = document.getElementById("progress-container");
+
     progressBar.style.width = "100%";
     progressContainer.style.display = "block";
 
@@ -1809,7 +1824,7 @@
         clearInterval(timer);
         document.getElementById("feedback").style.color = "red";
         document.getElementById("feedback").innerText = "시간 초과!";
-        
+
         wrongCount++;
         questionIndex++;
 
@@ -1833,7 +1848,7 @@
     const q = currentSet[questionIndex];
     const answerInput = document.getElementById("answer");
 
-    answerInput.value = "";           // ✅ 반드시 비워주기
+    answerInput.value = "";
     answerInput.focus();
 
     feedback.innerText = "";
@@ -1851,20 +1866,32 @@
       `;
     }
 
-    // 타이머
+    // 타이머 준비만 하고 시작은 입력 시에
+    const progressContainer = document.getElementById("progress-container");
+    progressContainer.style.display = settings.timerEnabled ? "block" : "none";
+
+    const progressBar = document.getElementById("progress-bar");
+    progressBar.style.width = "100%";
+    clearInterval(timer);
+    isTimerRunning = false;
+
+    // 타이머 시간 설정
     const timeLimits = {
       char: settings.charTime,
       word: settings.wordTime,
       sentence: settings.sentenceTime
     };
+    const duration = timeLimits[mode];
 
-    const progressContainer = document.getElementById("progress-container");
+    // 기존 이벤트 제거 후, 입력 시작 시 타이머 시작 이벤트 등록
+    answerInput.removeEventListener("input", handleTypingOnce);
+    answerInput.addEventListener("input", handleTypingOnce, { once: true });
 
-    if (settings.timerEnabled === true) {
-      startTimer(timeLimits[mode]);
-    } else {
-      progressContainer.style.display = "none";
-      clearInterval(timer);
+    function handleTypingOnce() {
+      if (!isTimerRunning && settings.timerEnabled) {
+        isTimerRunning = true;
+        startTimer(duration);
+      }
     }
   }
 
@@ -2320,11 +2347,6 @@ function startSmoothChatTimer(duration) {
     });
   });
 
-  // 페이지 열릴 때 기본 선택된 라디오에 맞게 초기 폰트 크기 적용
-  window.addEventListener("DOMContentLoaded", () => {
-    const checked = document.querySelector('input[name="fontSize"]:checked');
-    if (checked) checked.dispatchEvent(new Event("change"));
-  });
 </script> 
 </body>
 </html>
