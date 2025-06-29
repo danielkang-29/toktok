@@ -1875,31 +1875,31 @@
     }, 100);
   }
 
- // 문제 화면 렌더링 + 입력창 초기화 + 타이머 이벤트 설정 + 키보드 포커스 주기
-  function nextQuestion() {
-    if (questionIndex >= currentSet.length) {
-      showCompletionOverlay();
-      return;
-    }
+  // 문제 화면 렌더링 + 입력창 초기화 + 타이머 이벤트 설정 + 키보드 포커스 주기
+    function nextQuestion() {
+      if (questionIndex >= currentSet.length) {
+        showCompletionOverlay();
+        return;
+      }
 
-    const q = currentSet[questionIndex];
-    const answerInput = document.getElementById("answer");
+      const q = currentSet[questionIndex];
+      const answerInput = document.getElementById("answer");
 
-    answerInput.value = "";
-    feedback.innerText = "";
-    feedback.style.color = "green";
+      answerInput.value = "";
+      feedback.innerText = "";
+      feedback.style.color = "green";
 
-    // 문제 표시
-    if (mode === "char") {
-      document.getElementById("question").innerText = q;
-    } else if (mode === "word") {
-      document.getElementById("question").innerHTML = `<ruby>${q.kanji}<rt>${q.kana}</rt></ruby>`;
-    } else if (mode === "sentence") {
-      document.getElementById("question").innerHTML = `
-        <div style="font-size: 14px; color: gray;">${q.kana}</div>
-        <div style="font-size: 28px;">${q.kanji}</div>
-      `;
-    }
+      // 문제 표시
+      if (mode === "char") {
+        document.getElementById("question").innerText = q;
+      } else if (mode === "word") {
+        document.getElementById("question").innerHTML = `<ruby>${q.kanji}<rt>${q.kana}</rt></ruby>`;
+      } else if (mode === "sentence") {
+        document.getElementById("question").innerHTML = `
+          <div style="font-size: 14px; color: gray;">${q.kana}</div>
+          <div style="font-size: 28px;">${q.kanji}</div>
+        `;
+      }
 
     // 타이머 준비 (시작은 입력 시작 시)
     const progressContainer = document.getElementById("progress-container");
