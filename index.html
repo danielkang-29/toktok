@@ -58,25 +58,17 @@
       color: #C6C6C8;
     }
 
-    /* 모바일(터치) 환경에서 hover와 focus 효과 무효화 */
+    /* 모바일(터치) 환경에서는 hover 무효화 */
     @media (hover: none) and (pointer: coarse) {
-      /* 버튼 호버 시 색상 초기화 */
       #top-bar button:hover {
-        color: inherit !important;           /* 원래 텍스트 색상 유지 */
+        color: white !important;  /* 기본 색상으로 덮어쓰기 */
         background-color: transparent !important;
-        cursor: default !important;
       }
+    }
 
-      /* hover-effect-class 클래스가 적용된 요소의 hover 초기화 */
+    @media (hover: none) {
       .hover-effect-class:hover {
-        background-color: initial !important;
-        cursor: default !important;
-      }
-
-      /* 버튼 포커스 시 기본 아웃라인, 그림자 제거 */
-      #top-bar button:focus {
-        outline: none !important;
-        box-shadow: none !important;
+        background-color: initial !important; /* 혹은 원래 상태로 복구할 스타일 */
       }
     }
 
@@ -565,18 +557,6 @@
         box-sizing: border-box;
         position: fixed;  /* 맨 아래 고정 상태라면 */
         bottom: 20px;     /* 화면 아래에서 20px 띄우기 */
-      }
-    }
-
-    @media (hover: none) and (pointer: coarse) {
-      #top-bar button,
-      #top-bar button:hover,
-      #top-bar button:focus,
-      .hover-effect-class,
-      .hover-effect-class:hover,
-      .hover-effect-class:focus {
-        all: unset !important;
-        cursor: default !important;
       }
     }
 
@@ -2235,19 +2215,6 @@
     document.getElementById("info-tab-btn").classList.add("active-tab");
     document.getElementById("settings-tab-btn").classList.remove("active-tab");
   }
-  function clearButtonTouchState() {
-    const buttons = document.querySelectorAll('#top-bar button, .hover-effect-class');
-    buttons.forEach(button => {
-      button.blur(); // 포커스 해제
-      button.classList.remove('hover-effect-class'); // 클래스 제거
-      // 인라인 스타일도 초기화
-      button.style.outline = 'none';
-      button.style.boxShadow = 'none';
-      button.style.backgroundColor = 'transparent';
-      button.style.color = 'inherit';
-      button.style.cursor = 'default';
-    });
-  }
   function backToMainFromSettings() {
     const fs = document.querySelector('input[name="fontSize"]:checked').value;
     settings.fontSize = fs;
@@ -2286,8 +2253,6 @@
     wrongCount = 0; // 여기 추가!
     hideAllScreens();
     mainScreen.classList.add("active");
-
-    clearButtonTouchState();
 
     // 키보드 내리기 (입력 포커스 해제)
     const focused = document.activeElement;
@@ -2379,30 +2344,7 @@ function startSmoothChatTimer(duration) {
       }
     });
   });
-  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-    document.querySelectorAll('#top-bar button, .hover-effect-class').forEach(button => {
-      button.addEventListener('touchstart', () => {
-        button.blur();
-        button.classList.remove('hover-effect-class');
-      });
-    });
-  }
-  document.addEventListener('DOMContentLoaded', () => {
-    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-      document.querySelectorAll('#top-bar button, .hover-effect-class').forEach(button => {
-        button.addEventListener('touchstart', () => {
-          button.blur();
-          button.classList.remove('hover-effect-class');
-          // 강제 인라인 초기화
-          button.style.outline = 'none';
-          button.style.boxShadow = 'none';
-          button.style.backgroundColor = 'transparent';
-          button.style.color = 'inherit';
-          button.style.cursor = 'default';
-        });
-      });
-    }
-  });
+
 </script> 
 </body>
 </html>
