@@ -58,12 +58,16 @@
       color: #C6C6C8;
     }
 
-    /* 모든 모바일 환경에서 강제로 hover 효과 제거 */
-    @media (max-width: 768px) {
+    @media (hover: none), (max-width: 768px) {
       #top-bar button:hover,
       .hover-effect-class:hover {
-        all: unset !important;    /* 모든 스타일 초기화 */
+        background: none !important;
+        color: inherit !important;
+        box-shadow: none !important;
+        border-color: inherit !important;
         cursor: default !important;
+        transform: none !important;
+        transition: none !important;
       }
     }
 
