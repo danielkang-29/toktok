@@ -2217,8 +2217,15 @@
   }
   function clearButtonFocus() {
     document.querySelectorAll('#top-bar button, .hover-effect-class').forEach(button => {
-      button.blur();  // 버튼 포커스 해제
+      button.blur(); // 포커스 해제
+      button.classList.remove('hover-effect-class'); // 필요하면 클래스도 제거
     });
+  }
+  // 모바일 터치 환경 감지 후 실행
+  function clearFocusOnMobile() {
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+      clearButtonFocus();
+    }
   }
   function backToMainFromSettings() {
     const fs = document.querySelector('input[name="fontSize"]:checked').value;
@@ -2259,7 +2266,7 @@
     hideAllScreens();
     mainScreen.classList.add("active");
 
-    clearButtonFocus();  // 여기서 호출!
+    clearFocusOnMobile();
 
     // 키보드 내리기 (입력 포커스 해제)
     const focused = document.activeElement;
