@@ -58,17 +58,16 @@
       color: #C6C6C8;
     }
 
-    /* 모바일(터치) 환경에서는 hover 무효화 */
+    /* 모바일(터치) 환경에서는 hover 효과 무효화 */
     @media (hover: none) and (pointer: coarse) {
       #top-bar button:hover {
-        color: white !important;  /* 기본 색상으로 덮어쓰기 */
-        background-color: transparent !important;
+        color: white !important;        /* 기본 또는 원하는 텍스트 색상으로 덮어쓰기 */
+        background-color: transparent !important; /* 배경 투명하게 */
+        cursor: default !important;     /* 커서 변경 없게 */
       }
-    }
-
-    @media (hover: none) {
       .hover-effect-class:hover {
-        background-color: initial !important; /* 혹은 원래 상태로 복구할 스타일 */
+        background-color: initial !important; /* 원래 상태로 복구 */
+        cursor: default !important;
       }
     }
 
