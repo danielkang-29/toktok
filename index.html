@@ -1858,10 +1858,11 @@
     feedback.innerText = "";
     feedback.style.color = "green";
 
-    // 포커스는 살짝 딜레이 줘서 실행 (렌더링 이후)
     setTimeout(() => {
-      answerInput.focus({ preventScroll: true }); // 스크롤은 수동으로
-      answerInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      requestAnimationFrame(() => {
+        answerInput.focus({ preventScroll: true });
+        answerInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
     }, 100);
 
 
