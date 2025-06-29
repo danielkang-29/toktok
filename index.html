@@ -2223,17 +2223,18 @@
     document.getElementById("info-tab-btn").classList.add("active-tab");
     document.getElementById("settings-tab-btn").classList.remove("active-tab");
   }
-  function clearButtonFocus() {
-    document.querySelectorAll('#top-bar button, .hover-effect-class').forEach(button => {
-      button.blur(); // 포커스 해제
-      button.classList.remove('hover-effect-class'); // 필요하면 클래스도 제거
+  function clearButtonTouchState() {
+    const buttons = document.querySelectorAll('#top-bar button, .hover-effect-class');
+    buttons.forEach(button => {
+      button.blur();                     // 포커스 해제
+      button.classList.remove('hover-effect-class');  // 혹시 클래스 제거
+      // 스타일 강제 초기화
+      button.style.outline = 'none';
+      button.style.boxShadow = 'none';
+      button.style.backgroundColor = 'transparent';
+      button.style.color = 'inherit';
+      button.style.cursor = 'default';
     });
-  }
-  // 모바일 터치 환경 감지 후 실행
-  function clearFocusOnMobile() {
-    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-      clearButtonFocus();
-    }
   }
   function backToMainFromSettings() {
     const fs = document.querySelector('input[name="fontSize"]:checked').value;
@@ -2274,7 +2275,7 @@
     hideAllScreens();
     mainScreen.classList.add("active");
 
-    clearFocusOnMobile();
+    clearButtonTouchState();
 
     // 키보드 내리기 (입력 포커스 해제)
     const focused = document.activeElement;
