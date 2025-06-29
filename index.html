@@ -892,12 +892,20 @@
   }
 
   function backToMain() {
+    // 화면 전환 처리
     document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
     document.getElementById('main').classList.add('active');
     document.getElementById('settings-tab-btn').classList.remove('active-tab');
     document.getElementById('info-tab-btn').classList.remove('active-tab');
-  }
 
+    // 터치 기기에서 남아있는 hover/focus 효과 초기화
+    document.querySelectorAll('button, a, .hover-effect-class').forEach(el => {
+      el.blur(); // 포커스 제거
+      el.classList.remove('hover-effect-class'); // 필요 시 hover 관련 클래스 제거
+      el.style.outline = 'none'; // 브라우저 포커스 테두리 제거
+      el.style.boxShadow = 'none'; // 그림자 제거 (필요 시)
+    });
+  }
   const fullData = {
     char: [
       "あ","い","う","え","お",
@@ -1847,10 +1855,15 @@
     const answerInput = document.getElementById("answer");
 
     answerInput.value = "";
-    answerInput.focus();
-
     feedback.innerText = "";
     feedback.style.color = "green";
+
+    // 포커스는 살짝 딜레이 줘서 실행 (렌더링 이후)
+    setTimeout(() => {
+      answerInput.focus({ preventScroll: true }); // 스크롤은 수동으로
+      answerInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+
 
     // 문제 표시
     if (mode === "char") {
