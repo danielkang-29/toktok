@@ -1925,7 +1925,7 @@
     };
     const duration = timeLimits[mode];
 
-    // 기존 이벤트 제거 후, 입력 시작 시 타이머 시작 이벤트 등록
+    /// 기존 이벤트 제거 후, 입력 시작 시 타이머 시작 이벤트 등록
     answerInput.removeEventListener("input", handleTypingOnce);
     answerInput.addEventListener("input", handleTypingOnce, { once: true });
 
