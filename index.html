@@ -58,17 +58,25 @@
       color: #C6C6C8;
     }
 
-    /* 모바일(터치) 환경에서는 hover 무효화 */
+    /* 모바일(터치) 환경에서 hover와 focus 효과 무효화 */
     @media (hover: none) and (pointer: coarse) {
+      /* 버튼 호버 시 색상 초기화 */
       #top-bar button:hover {
-        color: white !important;  /* 기본 색상으로 덮어쓰기 */
+        color: inherit !important;           /* 원래 텍스트 색상 유지 */
         background-color: transparent !important;
+        cursor: default !important;
       }
-    }
 
-    @media (hover: none) {
+      /* hover-effect-class 클래스가 적용된 요소의 hover 초기화 */
       .hover-effect-class:hover {
-        background-color: initial !important; /* 혹은 원래 상태로 복구할 스타일 */
+        background-color: initial !important;
+        cursor: default !important;
+      }
+
+      /* 버튼 포커스 시 기본 아웃라인, 그림자 제거 */
+      #top-bar button:focus {
+        outline: none !important;
+        box-shadow: none !important;
       }
     }
 
@@ -2358,7 +2366,14 @@ function startSmoothChatTimer(duration) {
       }
     });
   });
-
+  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    document.querySelectorAll('#top-bar button, .hover-effect-class').forEach(button => {
+      button.addEventListener('touchstart', () => {
+        button.blur();
+        button.classList.remove('hover-effect-class');
+      });
+    });
+  }
 </script> 
 </body>
 </html>
