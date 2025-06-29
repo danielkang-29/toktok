@@ -2215,6 +2215,11 @@
     document.getElementById("info-tab-btn").classList.add("active-tab");
     document.getElementById("settings-tab-btn").classList.remove("active-tab");
   }
+  function clearButtonFocus() {
+    document.querySelectorAll('#top-bar button, .hover-effect-class').forEach(button => {
+      button.blur();  // 버튼 포커스 해제
+    });
+  }
   function backToMainFromSettings() {
     const fs = document.querySelector('input[name="fontSize"]:checked').value;
     settings.fontSize = fs;
@@ -2253,6 +2258,8 @@
     wrongCount = 0; // 여기 추가!
     hideAllScreens();
     mainScreen.classList.add("active");
+
+    clearButtonFocus();  // 여기서 호출!
 
     // 키보드 내리기 (입력 포커스 해제)
     const focused = document.activeElement;
@@ -2344,13 +2351,7 @@ function startSmoothChatTimer(duration) {
       }
     });
   });
-  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-    document.querySelectorAll('#top-bar button, .hover-effect-class').forEach(el => {
-      el.addEventListener('touchstart', () => {
-        el.classList.remove('hover-effect-class');
-      });
-    });
-  }
+
 </script> 
 </body>
 </html>
