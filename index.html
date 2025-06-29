@@ -1858,6 +1858,21 @@
     feedback.innerText = "";
     feedback.style.color = "green";
 
+    // 렌더링 이후에 포커스 (iOS 대응 포함)
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        answerInput.focus({ preventScroll: true });
+
+        // iOS 대응: 안 뜨면 input 클릭도 시도
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          answerInput.click(); // Safari용 보조 트리거
+        }
+
+        answerInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }, 100);
+
     setTimeout(() => {
       requestAnimationFrame(() => {
         answerInput.focus({ preventScroll: true });
