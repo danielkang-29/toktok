@@ -1875,131 +1875,75 @@
     }, 100);
   }
 
-  // 문제 화면 렌더링 + 입력창 초기화 + 타이머 이벤트 설정 + 키보드 포커스 주기
-    function nextQuestion() {
-      if (questionIndex >= currentSet.length) {
-        showCompletionOverlay();
-        return;
-      }
+  function nextQuestion() {
+    if (questionIndex >= currentSet.length) {
+      showCompletionOverlay();
+      return;
+    }
 
-      const q = currentSet[questionIndex];
-      const answerInput = document.getElementById("answer");
+    const q = currentSet[questionIndex];
+    const answerInput = document.getElementById("answer");
 
-      answerInput.value = "";
-      feedback.innerText = "";
-      feedback.style.color = "green";
+    answerInput.value = "";           // ✅ 반드시 비워주기
+    answerInput.focus();
 
-      // 문제 표시
-      if (mode === "char") {
-        document.getElementById("question").innerText = q;
-      } else if (mode === "word") {
-        document.getElementById("question").innerHTML = `<ruby>${q.kanji}<rt>${q.kana}</rt></ruby>`;
-      } else if (mode === "sentence") {
-        document.getElementById("question").innerHTML = `
-          <div style="font-size: 14px; color: gray;">${q.kana}</div>
-          <div style="font-size: 28px;">${q.kanji}</div>
-        `;
-      }
+    feedback.innerText = "";
+    feedback.style.color = "green";
 
-    // 타이머 준비 (시작은 입력 시작 시)
-    const progressContainer = document.getElementById("progress-container");
-    progressContainer.style.display = settings.timerEnabled ? "block" : "none";
+    // 문제 표시
+    if (mode === "char") {
+      document.getElementById("question").innerText = q;
+    } else if (mode === "word") {
+      document.getElementById("question").innerHTML = `<ruby>${q.kanji}<rt>${q.kana}</rt></ruby>`;
+    } else if (mode === "sentence") {
+      document.getElementById("question").innerHTML = `
+        <div style="font-size: 14px; color: gray;">${q.kana}</div>
+        <div style="font-size: 28px;">${q.kanji}</div>
+      `;
+    }
 
-    const progressBar = document.getElementById("progress-bar");
-    progressBar.style.width = "100%";
-    clearInterval(timer);
-    isTimerRunning = false;
-
+    // 타이머
     const timeLimits = {
       char: settings.charTime,
       word: settings.wordTime,
       sentence: settings.sentenceTime
     };
-    const duration = timeLimits[mode];
 
-    // 타이머 시작용 입력 이벤트 재등록
-    answerInput.removeEventListener("input", handleTypingOnce);
-    answerInput.addEventListener("input", handleTypingOnce, { once: true });
+    const progressContainer = document.getElementById("progress-container");
 
-    function handleTypingOnce() {
-      if (!isTimerRunning && settings.timerEnabled) {
-        isTimerRunning = true;
-        startTimer(duration);
+    if (settings.timerEnabled === true) {
+      startTimer(timeLimits[mode]);
+    } else {
+      progressContainer.style.display = "none";
+      clearInterval(timer);
+    }
+  }
+
+  // 정답 처리
+  const answerInput = document.getElementById("answer");
+  const feedback = document.getElementById("feedback");
+
+  let isComposing = false;
+
+  answerInput.addEventListener('compositionstart', () => {
+    isComposing = true;
+  });
+
+  answerInput.addEventListener('compositionend', () => {
+    isComposing = false;
+    handleNextStep();
+  });
+
+  answerInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (isComposing || isAnswering) return;
+
+      // 단어/문장 모드: 길이로 판단하지 않고 엔터로만 확정
+      if (mode === 'word' || mode === 'sentence' || mode === 'char') {
+        handleNextStep();
       }
     }
-
-    // 렌더링 완료 후 키보드 자동 띄우기 (포커스 + iOS 클릭)
-    setTimeout(() => {
-      answerInput.focus({ preventScroll: true });
-      answerInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
-  }
-
-  // 입력창 관련 이벤트는 한 번만 등록하기 위해 별도 함수로 분리
-  function setupAnswerInputListeners() {
-    const answerInput = document.getElementById("answer");
-
-    let isComposing = false;
-
-    answerInput.addEventListener('compositionstart', () => {
-      isComposing = true;
-    });
-
-    answerInput.addEventListener('compositionend', () => {
-      isComposing = false;
-      handleNextStep();
-    });
-
-    answerInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        if (isComposing || isAnswering) return;
-
-        if (mode === 'word' || mode === 'sentence' || mode === 'char') {
-          handleNextStep();
-        }
-      }
-    });
-  }
-
-  // 다음 단계 정답 처리 함수 (예시)
-  function handleNextStep() {
-    if (isAnswering) return;
-    isAnswering = true;
-
-    const answerInput = document.getElementById("answer");
-    const userAnswer = answerInput.value.trim();
-    const q = currentSet[questionIndex];
-
-    if (!q) {
-      console.warn("문제가 없거나 questionIndex가 범위를 벗어났어요.", currentSet, questionIndex);
-      isAnswering = false;
-      return;
-    }
-
-    // TODO: 정답 확인 로직 작성
-    // ...
-
-    // 다음 문제로 이동 또는 처리 완료 후
-    isAnswering = false;
-  }
-
-  // 타이머 시작 함수 예시
-  function startTimer(seconds) {
-    // 타이머 로직 작성
-    // 예) progressBar 너비를 줄여가거나 시간 체크 등
-    console.log(`타이머 시작: ${seconds}초`);
-  }
-
-  // 초기화 함수 (페이지 로드 시 또는 문제 시작 시)
-  function initialize() {
-    setupAnswerInputListeners();
-    nextQuestion();
-  }
-
-  // 예) 시작 버튼 클릭 시 초기화 및 문제 시작
-  document.getElementById("start-button").addEventListener("click", () => {
-    initialize();
   });
 
   function handleNextStep() {
