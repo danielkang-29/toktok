@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>톡톡 일본어</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     html, body {
       width: 100vw;
@@ -58,6 +59,25 @@
       color: #C6C6C8;
     }
 
+    #top-bar .icon-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      font-size: 24px;
+      color: #4257B2;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 동일한 그림자 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #top-bar .icon-button:hover {
+      background-color: #3345A1; /* 살짝 더 진한 파란색으로 hover */
+    }
+
     /* 모바일(터치) 환경에서는 hover 무효화 */
     @media (hover: none) and (pointer: coarse) {
       #top-bar button:hover {
@@ -69,6 +89,14 @@
     @media (hover: none) {
       .hover-effect-class:hover {
         background-color: initial !important; /* 혹은 원래 상태로 복구할 스타일 */
+      }
+    }
+
+    /* 모바일에서는 hover 효과 제거하고, 버튼 색은 유지 */
+    @media (hover: none) and (pointer: coarse) {
+      #top-bar button:hover {
+        background-color: #4257B2 !important;  /* 기존 배경 유지 */
+        color: white !important;               /* 글자색 유지 */
       }
     }
 
@@ -685,7 +713,9 @@
 
   <!-- 상단 고정 바 -->
   <div id="top-bar">
-    <button onclick="backToMain()">메인</button>
+    <button id="home-button" onclick="backToMain()">
+      <i class="fas fa-home"></i>
+    </button>
   </div>
 
   <div class="container">
@@ -1858,28 +1888,13 @@
     feedback.innerText = "";
     feedback.style.color = "green";
 
-    // 렌더링 이후에 포커스 (iOS 대응 포함)
     setTimeout(() => {
-      requestAnimationFrame(() => {
-        answerInput.focus({ preventScroll: true });
-
-        // iOS 대응: 안 뜨면 input 클릭도 시도
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        if (isMobile) {
-          answerInput.click(); // Safari용 보조 트리거
-        }
-
-        answerInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      });
-    }, 100);
-
-    setTimeout(() => {
-      requestAnimationFrame(() => {
-        answerInput.focus({ preventScroll: true });
-        answerInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      });
-    }, 100);
-
+      const input = document.getElementById('answer');
+      if (input) {
+        input.focus({ preventScroll: true });  // 포커스 먼저 줘야 키보드 뜸!
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 300);
 
     // 문제 표시
     if (mode === "char") {
