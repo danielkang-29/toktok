@@ -1894,7 +1894,7 @@
     const q = currentSet[questionIndex];
     const answerInput = document.getElementById("answer");
 
-    answerInput.value = "";           // ✅ 반드시 비워주기
+    answerInput.value = "";
     answerInput.focus();
 
     feedback.innerText = "";
@@ -1912,20 +1912,18 @@
       `;
     }
 
-    // 타이머
-    const timeLimits = {
-      char: settings.charTime,
-      word: settings.wordTime,
-      sentence: settings.sentenceTime
-    };
+    // ⏱️ 타이머 초기화 (설정 켜졌을 때만 보여주기)
+    isTimerRunning = false;
+    clearInterval(timer);
 
+    const progressBar = document.getElementById("progress-bar");
     const progressContainer = document.getElementById("progress-container");
 
-    if (settings.timerEnabled === true) {
-      startTimer(timeLimits[mode]);
+    if (settings.timerEnabled) {
+      progressBar.style.width = "100%";
+      progressContainer.style.display = "block";
     } else {
       progressContainer.style.display = "none";
-      clearInterval(timer);
     }
   }
 
@@ -1945,16 +1943,24 @@
   });
 
   answerInput.addEventListener('keydown', (e) => {
+    if (!isTimerRunning && !isComposing && settings.timerEnabled) {
+      const timeLimits = {
+        char: Number(settings.charTime),
+        word: Number(settings.wordTime),
+        sentence: Number(settings.sentenceTime)
+      };
+      startTimer(timeLimits[mode]);
+      isTimerRunning = true;
+    }
+
     if (e.key === 'Enter') {
       e.preventDefault();
       if (isComposing || isAnswering) return;
 
-      // 단어/문장 모드: 길이로 판단하지 않고 엔터로만 확정
-      if (mode === 'word' || mode === 'sentence' || mode === 'char') {
-        handleNextStep();
-      }
+      handleNextStep();
     }
   });
+
 
   function handleNextStep() {
     if (isAnswering) return;  // 이미 처리 중이면 무시
